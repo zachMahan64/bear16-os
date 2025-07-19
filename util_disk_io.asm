@@ -1,0 +1,24 @@
+# UTIL_DISK_IO.ASM
+
+# DISK OPERATIONS
+.const NO_OP = 0x00
+.const READ_BYTE_OP = 0x01
+.const WRITE_BYTE_OP = 0x02
+.const READ_WORD_OP = 0x03
+.const WRITE_WORD_OP = 0x04
+.const RESET_STATUS_OP = 0x05
+# DISK FLAGS
+.const OVERFLOW_ERROR = 0x01
+.const UNKNOWN_OP_ERROR = 0x02
+.const READ_DONE = 0x04
+.const WRITE_DONE = 0x08
+# PTRS TO DISK RESERVED REGIONS IN RAM
+.const DISK_ADDR_LO = 6559
+.const DISK_ADDR_MID = 6560
+.const DISK_ADDR_HI = 6561
+.const DISK_DATA = 6562
+.const DISK_OP = 6563
+.const DISK_STATUS = 6564
+
+util_busy_disk_write:
+    # a0 =
