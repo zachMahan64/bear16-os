@@ -6,8 +6,11 @@
 
 .data
 .const CON_STRT_LINE = 3
-.const CON_BUFFER_STRT = 18433
-.const CON_BUFFER_SIZE = 62 # ~ thisNum/32 = approx num lines not that safe -> increase later, currently overflow works fine just overwrites
+
+.const CON_NAME_LEN = 6
+.const CON_MAX_LINES = 5
+.const TOP_OF_BUFFER_CLAMP_VAL = (CON_MAX_LINES * 32 - CON_NAME_LEN)
+.const CON_BUFFER_SIZE = (TOP_OF_BUFFER_CLAMP_VAL) # ~ thisNum/32 = approx num lines not that safe -> increase later, currently overflow works fine just overwrites
                             #   anything that goes over 64 after the next line is malloc'd
 con_name:
     .string "B16->"
@@ -172,7 +175,7 @@ con_get_line:
             #clamp to preserve cname and <2 lines
             lw t0, fp, BUFFER_START_PTR_OFFS # access local var BUFFER_START_PTR_OFFS
             sub t0, s3, t0 # t0 = BUFFER TOP - BUFFER START
-            .const TOP_OF_BUFFER_CLAMP_VAL = 58 # = 64 - 5 = CON_BUFFER_SIZE - LENGTH OF CNAME
+
             lt subr_clamp_cursor_underflow, t0, 0
             uge subr_clamp_cursor_overflow, t0, TOP_OF_BUFFER_CLAMP_VAL
             
@@ -219,12 +222,11 @@ check_to_scroll:
         ret
 check_to_scroll_using_strlen_ram:
     # a0 = char*
-    uge check_to_scroll_using_strlen_ram_do_scroll, s1, LINE_REACHED_TO_TRIGGER_SCROLL #check current cursor line
+    uge check_to_scroll_using_strlen_ram_do_scroll, s1, (LINE_REACHED_TO_TRIGGER_SCROLL - 1) #check current cursor line
     ret
     check_to_scroll_using_strlen_ram_do_scroll:
         #reuse a0
         call con_scroll_purely_visual_using_strlen_ram
-        dec s1
         ret
 check_to_scroll_using_strlen_rom:
     # a0 = char*
@@ -238,20 +240,27 @@ check_to_scroll_using_strlen_rom:
 #DIRECT SCROLLING FUNCTIONS
 .const START_FIRST_LINE_IDX = 256
 .const NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st = 5376 # LINE WIDTH * NUM LINES = 256 * 21
+.const NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_20th = 5120 # LINE WIDTH * NUM LINES = 256 * 20
 con_scroll_once_purely_visual:
     lea t0, FB_LOC
     memcpy FB_LOC, START_FIRST_LINE_IDX, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st
+
+    mov t0, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st
+    add t1, t0, 256 # end loop val
+    con_scroll_once_purely_visual_clear_loop:
+        sb t0, 0 # write zero/clear memory
+        inc t0 # inc store location
+        ult con_scroll_once_purely_visual_clear_loop, t0, t1
     ret
 con_scroll_purely_visual_using_strlen_ram:
     #a0 = char*
     # reuse a0
     call util_strlen_ram
     mov t1, rv #get length of string!
-    div t1, t1, LINE_WIDTH_B     # LINE_WIDTH_B = 32
-    mult t1, t1, LINE_SIZE   # LINE_SIZE = 256
-    sub t1, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st, t1
-    lea t0, FB_LOC
-    memcpy FB_LOC, START_FIRST_LINE_IDX, t1
+    div a1, t1, LINE_WIDTH_B     # LINE_WIDTH_B = 32
+    mov a0, con_scroll_once_purely_visual
+    # a1 already set
+    call util_iter_loop
     ret
 
 con_scroll_purely_visual_using_strlen_rom:
@@ -259,11 +268,10 @@ con_scroll_purely_visual_using_strlen_rom:
     # reuse a0
     call util_strlen_rom
     mov t1, rv #get length of string!
-    div t1, t1, LINE_WIDTH_B     # LINE_WIDTH_B = 32
-    mult t1, t1, LINE_SIZE   # LINE_SIZE = 256
-    sub t1, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st, t1
-    lea t0, FB_LOC
-    memcpy FB_LOC, START_FIRST_LINE_IDX, t1
+    div a1, t1, LINE_WIDTH_B     # LINE_WIDTH_B = 32
+    mov a0, con_scroll_once_purely_visual
+    # a1 already set
+    call util_iter_loop
     ret
 
 .data
@@ -303,20 +311,25 @@ con_error:
 con_echo:
     # a0 = ptr to start of line buffer
     call cd_isolate_args
-    push rv # save ptr to arg
-    push rv # save again
+    .const CON_ECHO_NUM_LOCAL_VARS = 1
+    sub sp, sp, (CON_ECHO_NUM_LOCAL_VARS * 2)
+    .const CON_ECHO_PTR_TO_ARGS_OFFS = -2
+    sw fp, CON_ECHO_PTR_TO_ARGS_OFFS, rv # save ptr to args @ offset of -2
     # reuse a0
-    call check_to_scroll_using_strlen_ram
     inc s1
+    call check_to_scroll_using_strlen_ram
     call con_print_cname
     mov a0, s1 # line
     mov a1, s0 # index
-    pop a2 # retrieve ptr to arg
+    lw a2, fp, CON_ECHO_PTR_TO_ARGS_OFFS
     mov s10, TRUE #update cursor
+    eq con_echo_null_args, a2, NULL
     call blit_strl_ram #blitting a str
-    pop a0
+    lw a2, fp, CON_ECHO_PTR_TO_ARGS_OFFS
     call util_free # free args
+    con_echo_null_args:
     dec s1
+    call check_to_scroll
     ret
 con_test:
     call con_success
@@ -389,6 +402,7 @@ con_help_str:
     .string "You're on your own for now, good luck."
 .text
     mov a0, con_help_str
+    call con_scroll_purely_visual_using_strlen_rom
     inc s1 # increment line
     call con_print_cname
     mov a0, s1 # line
@@ -396,13 +410,6 @@ con_help_str:
     mov a2, con_help_str
     mov s10, TRUE #update cursor
     call blit_strl_rom
-    #.const CON_HELP_TIMES_TO_SCROLL = 3
-    #mov a0, CON_HELP_TIMES_TO_SCROLL
-    #mov a1, con_scroll_once_purely_visual
-    #call util_iter_loop
-    #sub s1, s1, CON_HELP_TIMES_TO_SCROLL
-
-    #call check_to_scroll
     ret
 con_clear:
     mov a0, 22 # all but bottom two lines

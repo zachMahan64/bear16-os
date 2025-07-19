@@ -65,8 +65,8 @@ console_dispatch_main: # currently just echos
         call t3 # call function
         ret
 # CMD PARSING
-.const CMD_MAX_SIZE = 9 # including '/0'
-.const CMD_MAX_SIZE_WO_NULL_TERM = 8
+.const CMD_MAX_SIZE = 17 # including '/0'
+.const CMD_MAX_SIZE_WO_NULL_TERM = (CMD_MAX_SIZE - 1)
 cd_isolate_cmd: #nf
     # a0 = char* to orig buffer
     # ~ rv = char* to cmd
