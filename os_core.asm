@@ -23,7 +23,7 @@ month_str_array:
     .string "NOV"
     .string "DEC"
 welcome_msg:
-    .string " Welcome to the Bear16 Console!\n    VERSION 0.0.4, 20250710"
+    .string " Welcome to the Bear16 Console!\n    VERSION 0.0.5, 20250719"
 
 .text
 #WELCOME
