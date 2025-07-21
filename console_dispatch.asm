@@ -13,6 +13,7 @@ cmd_table:
     .word cmdt_open, con_open
     .word cmdt_hi, con_hi
     .word cmdt_hey, con_hey
+    .word cmdt_title, con_login
     #add more
     .word NULL, con_cmd_not_found # throw an error if we read the table terminator
 cmd_table_strings:
@@ -32,6 +33,8 @@ cmd_table_strings:
         .string "hi"
     cmdt_hey:
         .string "hey"
+    cmdt_title:
+        .string "login"
 .text
 # DISPATCHING FUNCTIONS
 console_dispatch_main: # currently just echos

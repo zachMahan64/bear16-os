@@ -1,7 +1,7 @@
 # UTIL_MEM_MANAGER.ASM (WIP)
 .text
 .const TOP_OF_HEAP_PTR = 6656
-.const STARTING_HEAP_PTR_VALUE = 16384
+.const STARTING_HEAP_PTR_VALUE = 8192
 .const FREE_LIST_HEAD_LOC = 6558
 
 .const NULL = 0
@@ -17,7 +17,7 @@ util_malloc: # zeroes memory
     # reserves a0 + 2 bytes and then store size in the base & return the ptr just above the base
     # a0 = num bytes
     call util_malloc_traverse_free_list # reuse a0
-    lt util_malloc_bump_top_of_heap, rv, 16384 # free list corruption -> do our best to not break everything
+    lt util_malloc_bump_top_of_heap, rv, STARTING_HEAP_PTR_VALUE # free list corruption -> do our best to not break everything
     ne util_malloc_hit_in_free_list, rv, 0 # return & reuse rv since it already points to the valid mem addr found in free list
     #------BRANCH DIVIDE------#
     util_malloc_bump_top_of_heap:

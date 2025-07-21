@@ -39,6 +39,13 @@ con_init:
     #mov a0, 0
     call util_get_top_of_heap_ptr
     # reuse rv from the get call
+    call os_init
+    ret
+
+con_reset_console:
+    call util_clr_fb
+    call os_init
+    call con_init
     ret
 
 con_print_cname:
@@ -427,4 +434,8 @@ con_open:
     # reuse a0
     pop a0
     call util_free # free args
+    ret
+con_login:
+    call os_gfx_login_screen
+    call con_reset_console
     ret

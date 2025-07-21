@@ -125,9 +125,9 @@ tictactoe_blit_board:
         mov a2, TTT_HLINE
         push 0 # init cnt
         tictactoe_blit_board_hlines_loop:
-            call blit_ttt_tile
+            call blit_byte_tile
             add a0, a0, TTT_ILINE_DIST
-            call blit_ttt_tile
+            call blit_byte_tile
             sub a0, a0, TTT_ILINE_DIST
             inc a1
             # cnt manip
@@ -143,9 +143,9 @@ tictactoe_blit_board:
         mov a2, TTT_VLINE
         push 0 # init cnt
         tictactoe_blit_board_vlines_loop:
-            call blit_ttt_tile
+            call blit_byte_tile
             add a1, a1, TTT_ILINE_DIST
-            call blit_ttt_tile
+            call blit_byte_tile
             sub a1, a1, TTT_ILINE_DIST
             inc a0
             # cnt manip
@@ -190,31 +190,7 @@ tictactoe_exit:
     call os_init_taskbar
     call con_clear
     ret
-
 # helpers
-blit_ttt_tile:
-    #a0 = line, a1 = index, a2 = desired tile (works for any flat-data tile), s10 = clobber (TRUE/FALSE)
-    mult t0, a0, LINE_SIZE # set line
-    add t0, t0, a1 # set index
-    add t0, t0, FB_LOC #adjust for FB location start in SRAM
-
-    mov t1, a2
-
-    clr t2 # cnt
-    blit_ttt_tile_loop:
-        lbrom t3, t1       #load byte from rom in t3
-        eq blit_ttt_tile_clobber_false, s10, FALSE
-        blit_ttt_tile_clobber_false_exit:
-        sb t0, t3          #store byte in t3 into addr @ t0
-        add t0, t0, LINE_WIDTH_B     # t0 += 32
-        inc t1             # next byte in rom
-        inc t2             # t2++
-        ult blit_ttt_tile_loop, t2, 8 # check cnt
-    ret
-    blit_ttt_tile_clobber_false:
-        lb t4, t0
-        or t3, t3, t4 # bitwise or rom and ram byte
-        jmp blit_ttt_tile_clobber_false_exit
 blit_ttt_x:
 # for ref: TTT_BOARD_LINE_START = 5
 # for ref: TTT_BOARD_IDX_START = 7
@@ -252,7 +228,7 @@ blit_ttt_x:
     #set up da counter for da loop
     sw fp, BLIT_TTT_X_CNT_OFFS, 0 # clear cnt
     blit_ttt_x_loop_0:
-        call blit_ttt_tile
+        call blit_byte_tile
         inc a0
         inc a1
         lw t0, fp, BLIT_TTT_X_CNT_OFFS
@@ -269,7 +245,7 @@ blit_ttt_x:
     #set up da counter for da loop
     sw fp, BLIT_TTT_X_CNT_OFFS, 0 # clear cnt
     blit_ttt_x_loop_1:
-        call blit_ttt_tile
+        call blit_byte_tile
         dec a0
         inc a1
         lw t0, fp, BLIT_TTT_X_CNT_OFFS
@@ -318,9 +294,9 @@ blit_ttt_o:
 
     blit_ttt_o_loop_0:
         inc a1
-        call blit_ttt_tile
+        call blit_byte_tile
         add a0, a0, (TTT_BOARD_TILE_THICKNESS - 1)
-        call blit_ttt_tile
+        call blit_byte_tile
         sub a0, a0, (TTT_BOARD_TILE_THICKNESS - 1)
 
         lw t0, fp, BLIT_TTT_O_CNT_OFFS
@@ -338,9 +314,9 @@ blit_ttt_o:
     sw fp, BLIT_TTT_O_CNT_OFFS, 0 # clear cnt
     blit_ttt_o_loop_1:
         inc a0
-        call blit_ttt_tile
+        call blit_byte_tile
         add a1, a1, (TTT_BOARD_TILE_THICKNESS - 1)
-        call blit_ttt_tile
+        call blit_byte_tile
         sub a1, a1, (TTT_BOARD_TILE_THICKNESS - 1)
 
         lw t0, fp, BLIT_TTT_O_CNT_OFFS
@@ -353,19 +329,19 @@ blit_ttt_o:
     lb a0, fp, BLIT_TTT_O_LINE_OFFS
     lb a1, fp, BLIT_TTT_O_IDX_OFFS
     mov a2, TTT_O_TL
-    call blit_ttt_tile
+    call blit_byte_tile
 
     add a0, a0, (TTT_BOARD_TILE_THICKNESS - 1)
     mov a2, TTT_O_BL
-    call blit_ttt_tile
+    call blit_byte_tile
 
     add a1, a1, (TTT_BOARD_TILE_THICKNESS - 1)
     mov a2, TTT_O_BR
-    call blit_ttt_tile
+    call blit_byte_tile
 
     sub a0, a0, (TTT_BOARD_TILE_THICKNESS - 1)
     mov a2, TTT_O_TR
-    call blit_ttt_tile
+    call blit_byte_tile
 
     ret
 

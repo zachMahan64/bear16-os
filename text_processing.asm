@@ -1,5 +1,5 @@
 # TEXT_PROCESSING.ASM
-# ADD baby_caps
+# WIP: baby_caps
 .data
 ctset_start: #Char Tile Set (ASCII)
 ctset_0:
@@ -122,56 +122,113 @@ nonalpha_shift_map: # we use this for linear look ups
 
 blit_cl:
     #a0 = line, a1 = index, a2 = desired char
-    mult t0, a0, LINE_SIZE # set line
+    # note: LINE_SIZE = 256, LINE_WIDTH = 32 -> but we're using logical rsh & lsh for speed (this is heavily used fn)
+    lsh t0, a0, 8 # set line (mult by 256)
     add t0, t0, a1 # set index
     add t0, t0, FB_LOC #adjust for FB location start in SRAM
     sub t1, a2, 32 # get char index in rom
-    div t7, t1, 32
+    rsh t7, t1, 5 # div by 32
     mov t8, t7 #save this
-    mult t7, t7, LINE_SIZE
+    lsh t7, t7, 8 # mult 256
     add t1, t1, t7
-    mult t8, t8, 32
+    lsh t8, t8, 5 # mult 32
     sub t1, t1, t8
     add t1, t1, ctset_start
     clr t2 # cnt
-    bcl_loop:
+    blit_cl_loop:
         lbrom t3, t1       #load byte from rom in t3
         sb t0, t3          #store byte in t3 into addr @ t0
         add t0, t0, LINE_WIDTH_B     # t0 += 32
         add t1, t1, LINE_WIDTH_B     # t1 += 32
         inc t2             # t2++
-        ult bcl_loop, t2, 8 # check cnt
+        ult blit_cl_loop, t2, 8 # check cnt
+    ret
+blit_cl_inv:
+    #a0 = line, a1 = index, a2 = desired char
+    # note: LINE_SIZE = 256, LINE_WIDTH = 32 -> but we're using logical rsh & lsh for speed (this is heavily used fn)
+    # inverted! (for blitting into neg space)
+    lsh t0, a0, 8 # set line (mult by 256)
+    add t0, t0, a1 # set index
+    add t0, t0, FB_LOC #adjust for FB location start in SRAM
+    sub t1, a2, 32 # get char index in rom
+    rsh t7, t1, 5 # div by 32
+    mov t8, t7 #save this
+    lsh t7, t7, 8 # mult 256
+    add t1, t1, t7
+    lsh t8, t8, 5 # mult 32
+    sub t1, t1, t8
+    add t1, t1, ctset_start
+    clr t2 # cnt
+    blit_cl_inv_loop:
+        lbrom t3, t1       #load byte from rom in t3
+        not t3, t3 # invert!
+        sb t0, t3          #store byte in t3 into addr @ t0
+        add t0, t0, LINE_WIDTH_B     # t0 += 32
+        add t1, t1, LINE_WIDTH_B     # t1 += 32
+        inc t2             # t2++
+        ult blit_cl_inv_loop, t2, 8 # check cnt
     ret
 blit_strl_rom:
     #a0 = line, a1 = index, a2 = char* (rom addr), s10 = bool updateCursorPtr
     mov t5, a2 # current char ptr
-    bstrl_rom_loop:
+    blit_strl_rom_loop:
         lbrom a2, t5 # a2 <- *char
-        eq bstrl_rom_ret, a2, 0
-        eq bstrl_rom_tab, a2, 9
-        eq bstrl_rom_newline, a2, 10
+        eq blit_strl_rom_ret, a2, 0
+        eq blit_strl_rom_tab, a2, 9
+        eq blit_strl_rom_newline, a2, 10
         call blit_cl #reuse a0 & a1
         inc a1 # inc index
-        uge bstrl_rom_newline, a1, 32 # if index >= 32 do \n
-        bstrl_rom_subr_exit:
+        uge blit_strl_rom_newline, a1, 32 # if index >= 32 do \n
+        blit_strl_rom_subr_exit:
         inc t5
-        jmp bstrl_rom_loop
-    bstrl_rom_ret:
-        ugt bstrl_rom_do_update_cursor, s10, 0 # if s10 == true
-        bstrl_rom_do_update_cursor_exit:
+        jmp blit_strl_rom_loop
+    blit_strl_rom_ret:
+        ugt blit_strl_rom_do_update_cursor, s10, 0 # if s10 == true
+        blit_strl_rom_do_update_cursor_exit:
         clr s10       # reset this val (do not reuse, defaults to do not update)
         ret
-    bstrl_rom_newline:
+    blit_strl_rom_newline:
         inc a0
         clr a1
-        jmp bstrl_rom_subr_exit
-    bstrl_rom_tab:
+        jmp blit_strl_rom_subr_exit
+    blit_strl_rom_tab:
         add a1, a1, 2
-        jmp bstrl_rom_subr_exit
-    bstrl_rom_do_update_cursor:
+        jmp blit_strl_rom_subr_exit
+    blit_strl_rom_do_update_cursor:
         mov s0, a1
         mov s1, a0
-        jmp bstrl_rom_do_update_cursor_exit
+        jmp blit_strl_rom_do_update_cursor_exit
+        
+blit_strl_rom_inv:
+    #a0 = line, a1 = index, a2 = char* (rom addr), s10 = bool updateCursorPtr
+    mov t5, a2 # current char ptr
+    blit_strl_rom_inv_loop:
+        lbrom a2, t5 # a2 <- *char
+        eq blit_strl_rom_inv_ret, a2, 0
+        eq blit_strl_rom_inv_tab, a2, 9
+        eq blit_strl_rom_inv_newline, a2, 10
+        call blit_cl_inv #reuse a0 & a1
+        inc a1 # inc index
+        uge blit_strl_rom_inv_newline, a1, 32 # if index >= 32 do \n
+        blit_strl_rom_inv_subr_exit:
+        inc t5
+        jmp blit_strl_rom_inv_loop
+    blit_strl_rom_inv_ret:
+        ugt blit_strl_rom_inv_do_update_cursor, s10, 0 # if s10 == true
+        blit_strl_rom_inv_do_update_cursor_exit:
+        clr s10       # reset this val (do not reuse, defaults to do not update)
+        ret
+    blit_strl_rom_inv_newline:
+        inc a0
+        clr a1
+        jmp blit_strl_rom_inv_subr_exit
+    blit_strl_rom_inv_tab:
+        add a1, a1, 2
+        jmp blit_strl_rom_inv_subr_exit
+    blit_strl_rom_inv_do_update_cursor:
+        mov s0, a1
+        mov s1, a0
+        jmp blit_strl_rom_inv_do_update_cursor_exit
 
 blit_strl_ram:
     #a0 = line, a1 = index, a2 = char* (ram addr), s10 = bool updateCursorPtr
@@ -205,7 +262,7 @@ blit_strl_ram:
         jmp bstrl_ram_do_update_cursor_exit
 
 # NUMBER BLITING
-blit_2dig_pint:
+    blit_2dig_pint:
         # a0 = line, a1 = index, a2 = num
         div t0, a2, 10 # tens digit
         mod t1, a2, 10 # ones digit

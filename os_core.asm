@@ -6,6 +6,7 @@
 @include "util_mem_manager.asm"
 @include "util_misc.asm"
 @include "math.asm"
+@include "util_blit.asm"
 
 .data
 
@@ -40,7 +41,7 @@ print_welcome_msg:
 .const TRUE = 1
 .const FALSE = 0
 
-init_os:
+os_init:
     call os_init_heap
     call os_init_taskbar
     call os_update

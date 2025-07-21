@@ -13,6 +13,12 @@ util_stall_esc:
     lea t0, IO_LOC
     sb t0, 0 # clear IO byte
     ret
+util_stall_enter:
+    lb t0, IO_LOC
+    ne util_stall_enter, t0, K_ENTER # check if enter is pressed
+    lea t0, IO_LOC
+    sb t0, 0 # clear IO byte
+    ret
 
 util_iter_loop:
     # a0 = function ptr
