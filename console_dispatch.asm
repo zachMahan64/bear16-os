@@ -62,7 +62,7 @@ console_dispatch_main: # currently just echos
     ret
     console_dispatch_main_jumpt:
         add t0, s5, 2  # load ptr to jump addr
-        add t0, t0, s7 # "
+        add t0, t0, s7 # 
         lwrom t3, t0      # deference jump addr ptr
         pop a0 # get ptr from line buffer back
         call t3 # call function

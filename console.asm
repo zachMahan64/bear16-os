@@ -11,7 +11,7 @@
 .const CON_MAX_LINES = 5
 .const TOP_OF_BUFFER_CLAMP_VAL = (CON_MAX_LINES * 32 - CON_NAME_LEN)
 .const CON_BUFFER_SIZE = (TOP_OF_BUFFER_CLAMP_VAL) # ~ thisNum/32 = approx num lines not that safe -> increase later, currently overflow works fine just overwrites
-                            #   anything that goes over 64 after the next line is malloc'd
+                            #   anything that goes over 64 after the next line is mallocd
 con_name:
     .string "B16->"
 .text
