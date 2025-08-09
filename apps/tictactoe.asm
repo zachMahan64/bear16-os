@@ -98,7 +98,8 @@ tictactoe_play:
     # TESTING/WIP ~~~~~~~~~~~#
     add t0, fp, TTT_PLAY_BOARD_ARR_OFFS
     sb t0, 8, 1 # board[src1] = X
-    sb t0, 3, 2
+    sb t0, 5, 2
+    sb t0, 7, 2
     add a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
     call ttt_blit_game_state
     #~~~~~~~~~~~~~~~~~~~~~~~~#
