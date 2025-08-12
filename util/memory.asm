@@ -1,4 +1,4 @@
-# UTIL/MEM_MANAGER.ASM (WIP)
+# UTIL/MEMORY.ASM (WIP)
 .text
 .const TOP_OF_HEAP_PTR = 6656
 .const STARTING_HEAP_PTR_VALUE = 8192
@@ -122,7 +122,10 @@ util_sallocz:
         inc t1
         ult util_sallocz_loop, t1, t0
     retl
-
+# COPYING
+util_cpy_rom_ram: # WIP
+    # a0 = addr in rom, a1 = addr in ram, a2 = end
+    ret
 # HELPER/BASICS
 util_get_top_of_heap_ptr:
     lw t0, TOP_OF_HEAP_PTR

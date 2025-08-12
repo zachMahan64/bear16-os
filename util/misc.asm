@@ -1,6 +1,7 @@
 # UTIL/MISC.ASM
 @include "text_processing.asm"
-@include "util/mem_manager.asm"
+@include "util/memory.asm"
+@include "util/constants.asm"
 .text
 #CTRL FLOW UTILITIES
 util_stall:

@@ -3,7 +3,7 @@
 @include "text_processing.asm"
 @include "util/chrono.asm"
 @include "util/disk_io.asm"
-@include "util/mem_manager.asm"
+@include "util/memory.asm"
 @include "util/misc.asm"
 @include "util/math.asm"
 @include "util/blit.asm"
@@ -37,9 +37,7 @@ print_welcome_msg:
     ret
 
 #OS CORE FUNCTIONS
-# UNIV CONSTANTS
-.const TRUE = 1
-.const FALSE = 0
+
 
 os_init:
     call os_init_heap

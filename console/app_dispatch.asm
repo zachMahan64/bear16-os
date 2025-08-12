@@ -1,4 +1,9 @@
 # CONSOLE/APP_DISPATCH.ASM
+# APPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# put apps here!
+@include "apps/notepad/main.asm"
+@include "apps/tictactoe/main.asm"
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 .data
 app_dis_start:
     # char*, {label to call/fn ptr}
