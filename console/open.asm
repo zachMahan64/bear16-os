@@ -1,4 +1,4 @@
-# APP_DISPATCH.ASM
+# CONSOLE/OPEN.ASM
 
 @include "os_core.asm" #implements
 # APPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

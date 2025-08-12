@@ -1,4 +1,4 @@
-# TICTACTOE_ASSETS.ASM
+# TICTACTOE/ASSETS.ASM
 
 .data
 .const TTT_VLINE = (ttt_tset_map_0)

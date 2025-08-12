@@ -1,5 +1,4 @@
-# OS_GFX.ASM
-# Largely for test-purposes
+# GFX/MAIN.ASM
 
 @include "os_core.asm"
 @include "gfx/assets.asm"

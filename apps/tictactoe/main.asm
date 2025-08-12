@@ -1,4 +1,4 @@
-# TICTACTOE.ASM
+# TICTACTOE/MAIN.ASM
 
 @include "text_processing.asm"
 @include "os_core.asm"

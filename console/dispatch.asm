@@ -1,4 +1,4 @@
-#COMMAND DISPATCH TABLE
+# CONSOLE/DISPATCH.ASM
 @include "os_core.asm"
 @include "console/main.asm"
 

@@ -1,4 +1,4 @@
-# CONSOLE.ASM (WIP)
+# CONSOLE/MAIN.ASM (WIP)
 # REG CONV: Overload s10 to a3 & s9 to a4, {s0 = index ptr, s1 = line ptr} -> for cursor
 @include "os_core.asm"
 @include "console/dispatch.asm"

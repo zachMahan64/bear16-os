@@ -1,4 +1,4 @@
-# UTIL_MISC.ASM
+# UTIL/MISC.ASM
 @include "text_processing.asm"
 @include "util/mem_manager.asm"
 .text

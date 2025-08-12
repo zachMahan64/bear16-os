@@ -1,4 +1,4 @@
-# APP_NAME_TABLE.ASM
+# CONSOLE/APP_NAME_TABLE.ASM
 .data
 app_name_table:
     app_dis_notepad:
