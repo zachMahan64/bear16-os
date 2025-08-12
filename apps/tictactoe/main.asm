@@ -2,7 +2,7 @@
 
 @include "text_processing.asm"
 @include "os_core.asm"
-@include "util_blit.asm"
+@include "util/blit.asm"
 
 @include "apps/tictactoe/assets.asm"
 

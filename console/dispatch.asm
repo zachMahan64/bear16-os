@@ -1,10 +1,18 @@
 #COMMAND DISPATCH TABLE
 @include "os_core.asm"
-@include "console.asm"
+@include "console/main.asm"
+
+# APPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# put apps here!
+@include "apps/notepad/main.asm"
+@include "apps/tictactoe/main.asm"
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
 .data
 cmd_table:
     # char*, {label to call/fn ptr}
     # [4 bytes per entry]
+    .word cmdt_empty, con_empty
     .word cmdt_echo, con_echo
     .word cmdt_test, con_test
     .word cmdt_help, con_help
@@ -14,9 +22,16 @@ cmd_table:
     .word cmdt_hi, con_hi
     .word cmdt_hey, con_hey
     .word cmdt_title, con_login
-    #add more
+# ADD JUMP LINKS HERE, EQUIVALENT TO ADDING TO PATH #
+# this aliases the names of apps as commands!
+    .word app_dis_notepad, notepad_main
+    .word app_dis_tic_tac_toe, tictactoe_start
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     .word NULL, con_cmd_not_found # throw an error if we read the table terminator
 cmd_table_strings:
+    cmdt_empty:
+        .byte '\0'
     cmdt_echo:
         .string "echo"
     cmdt_test:
@@ -35,6 +50,7 @@ cmd_table_strings:
         .string "hey"
     cmdt_title:
         .string "login"
+@include "console/app_name_table.asm" # add custom apps inside this file
 .text
 # DISPATCHING FUNCTIONS
 console_dispatch_main: # currently just echos
@@ -62,7 +78,7 @@ console_dispatch_main: # currently just echos
     ret
     console_dispatch_main_jumpt:
         add t0, s5, 2  # load ptr to jump addr
-        add t0, t0, s7 # 
+        add t0, t0, s7 #
         lwrom t3, t0      # deference jump addr ptr
         pop a0 # get ptr from line buffer back
         call t3 # call function

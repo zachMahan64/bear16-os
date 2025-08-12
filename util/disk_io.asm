@@ -1,6 +1,6 @@
 # UTIL_DISK_IO.ASM
 
-@include "util_debug.asm"
+@include "util/debug.asm"
 
 .text
 

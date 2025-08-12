@@ -1,8 +1,9 @@
 # CONSOLE.ASM (WIP)
 # REG CONV: Overload s10 to a3 & s9 to a4, {s0 = index ptr, s1 = line ptr} -> for cursor
 @include "os_core.asm"
-@include "console_dispatch.asm"
-@include "app_dispatch.asm"
+@include "console/dispatch.asm"
+@include "console/open.asm"
+@include "gfx/main.asm"
 
 .data
 .const CON_STRT_LINE = 3
@@ -185,7 +186,7 @@ con_get_line:
 
             lt subr_clamp_cursor_underflow, t0, 0
             uge subr_clamp_cursor_overflow, t0, TOP_OF_BUFFER_CLAMP_VAL
-            
+
             lb t1, s3 # load char at top of buffer to determine subr exit
                 eq clamp_backspace_exit, s2, 8 # for backspace, check last key press, not top of char buffer
                 eq clamp_tab_exit, t1, '9'     # for tab,
@@ -293,6 +294,10 @@ con_process_line:
     call console_dispatch_main
         inc s1
     ret
+con_empty:
+    call check_to_scroll
+    ret
+
 con_success:
     call check_to_scroll
     inc s1 # increment line
@@ -406,7 +411,7 @@ con_hey_str:
 con_help:
 .data
 con_help_str:
-    .string "You're on your own for now, good luck."
+    .string "See the bear16 repo on \n     Github for help!"
 .text
     mov a0, con_help_str
     call con_scroll_purely_visual_using_strlen_rom
@@ -421,7 +426,8 @@ con_help_str:
 con_clear:
     mov a0, 22 # all but bottom two lines
     call util_clr_fb_by_line_idx # clear entire thing besides OS heads-up display at bottom
-    call con_init
+    mov s0, 0
+    mov s1, 0
     ret
 
 con_open:

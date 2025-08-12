@@ -1,12 +1,12 @@
 # OS_CORE.ASM
 # REG CONV: Overload s10 to a3 & s9 to a4, {s0 = index ptr, s1 = line ptr} -> for cursor
 @include "text_processing.asm"
-@include "util_chrono.asm"
-@include "util_disk_io.asm"
-@include "util_mem_manager.asm"
-@include "util_misc.asm"
-@include "math.asm"
-@include "util_blit.asm"
+@include "util/chrono.asm"
+@include "util/disk_io.asm"
+@include "util/mem_manager.asm"
+@include "util/misc.asm"
+@include "util/math.asm"
+@include "util/blit.asm"
 
 .data
 

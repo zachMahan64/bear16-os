@@ -1,6 +1,6 @@
 # UTIL_MISC.ASM
 @include "text_processing.asm"
-@include "util_mem_manager.asm"
+@include "util/mem_manager.asm"
 .text
 #CTRL FLOW UTILITIES
 util_stall:

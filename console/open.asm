@@ -1,30 +1,20 @@
 # APP_DISPATCH.ASM
 
-@include "os_core.asm" #implements interface
+@include "os_core.asm" #implements
 # APPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 @include "apps/notepad/main.asm"
 @include "apps/tictactoe/main.asm"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 .data
-app_dist:
-app_dist_start:
-    # char*, {label to call/fn ptr}
-    # [4 bytes per entry]
-    .word app_dist_notepad, notepad_main
-    .word app_dist_tic_tac_toe, tictactoe_start
-    #add more
-    .word NULL, app_not_found # throw an error if we read the table terminator
-app_dist_strings:
-    app_dist_notepad:
-        .string "notepad"
-    app_dist_tic_tac_toe:
-        .string "tictactoe"
+app_dis:
+@include "console/app_dispatch.asm"
+@include "console/app_name_table.asm"
 .text
 app_dis_main:
     #
     # scope-saved s-register usage
-    lea s5, app_dist_start #ptr inside table
+    lea s5, app_dis_start #ptr inside table
     mov s6, a0 # get ptr to app name
     clr s7 # cnt
     app_dis_main_loop: # WIP
