@@ -2,8 +2,8 @@
 
 @include "os_core.asm" #implements interface
 # APPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-@include "apps/notepad.asm"
-@include "apps/tictactoe.asm"
+@include "apps/notepad/main.asm"
+@include "apps/tictactoe/main.asm"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 .data

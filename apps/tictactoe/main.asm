@@ -4,7 +4,7 @@
 @include "os_core.asm"
 @include "util_blit.asm"
 
-@include "apps/tictactoe_assets.asm"
+@include "apps/tictactoe/assets.asm"
 
 .data
 tictactoe_title_name_str:
