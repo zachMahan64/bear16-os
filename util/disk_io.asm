@@ -64,8 +64,7 @@ util_busy_disk_write:
         util_busy_disk_write_loop_lock:
             lb t6, DISK_STATUS
             # TODO bug: inf loop inside the lock
-            mov t9, 17 # debug
-            sb t9, 0xFF # debug
+            # i believe the bug must be that the disk is not giving the WRITE_DONE status
             ne util_busy_disk_write_loop_lock, t6, WRITE_DONE
             mov t6, DISK_STATUS
             sb t6, READY

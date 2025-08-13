@@ -13,7 +13,7 @@ util_init_free_list:
 
 # HEAP ALLOCATION FUNCTIONS
 util_malloc: # zeroes memory
-    #LINKED FREE LIST WIP, NONSPLITTING/COALESCING
+    # LINKED FREE LIST WIP, NONSPLITTING/COALESCING
     # reserves a0 + 2 bytes and then store size in the base & return the ptr just above the base
     # a0 = num bytes
     call util_malloc_traverse_free_list # reuse a0
@@ -123,8 +123,22 @@ util_sallocz:
         ult util_sallocz_loop, t1, t0
     retl
 # COPYING
-util_cpy_rom_ram: # WIP
-    # a0 = addr in rom, a1 = addr in ram, a2 = end
+util_cpy_rom_ram: # you can also just use romcpy instruction
+    # a0 = addr in rom, a1 = addr in ram, a2 = len
+    eq util_cpy_rom_ram_ret, a2, 0 # len = zero guard!
+    push a0
+    push a1
+    push a2
+    clr t0 # cnt / offset
+    util_cpy_rom_ram_loop:
+        lbrom t1, a0, t0 # t1 <- [addr_in_rom + offs]
+        sb a1, t0, t1 # [addr_in_ram + offs] <- t1
+        inc t0
+        lt util_cpy_rom_ram_loop, t0, a2
+    pop a2
+    pop a1
+    pop a0
+    util_cpy_rom_ram_ret:
     ret
 # HELPER/BASICS
 util_get_top_of_heap_ptr:
