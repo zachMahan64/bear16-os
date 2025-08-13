@@ -1,5 +1,7 @@
 # OS_CORE.ASM
 # REG CONV: Overload s10 to a3 & s9 to a4, {s0 = index ptr, s1 = line ptr} -> for cursor
+
+# include all utils by default
 @include "text_processing.asm"
 @include "util/chrono.asm"
 @include "util/disk_io.asm"
@@ -7,6 +9,7 @@
 @include "util/misc.asm"
 @include "util/math.asm"
 @include "util/blit.asm"
+@include "util/error.asm"
 
 .data
 
@@ -116,4 +119,7 @@ os_init_heap:
     sw t0, STARTING_HEAP_PTR_VALUE
     # INIT FREE LIST
     call util_init_free_list
+    ret
+os_check_for_sys_errors:
+    # STACK OVERFLOW, ETC
     ret
