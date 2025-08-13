@@ -53,9 +53,13 @@ util_busy_disk_write:
     util_busy_disk_write_loop:
         # set up for disk operation
         lb t5, t0, t4 # data <- [data_ptr + offset_from_cnt]
+        mov t6, DISK_DATA
+        sb t6, t5
         mov t6, DISK_ADDR_LO
-        sw t6, t2 # [data_offset_loc] <- data_offset
+        mov s8, t6 # TODO DEBUG
+        sw t6, t2, t4 # [data_offset_loc] <- data_offset + cnt
         mov t6, DISK_ADDR_HI
+        mov s9, t6 # TODO DEBUG
         sb t6, t3 # [data_page_loc] <- data_page
 
         # set disk operation
@@ -80,6 +84,14 @@ util_busy_disk_write:
     lw a2, fp, UTIL_BUSY_DISK_WRITE_DEST_OFFSET_OFFS
     lw s10, fp, UTIL_BUSY_DISK_WRITE_PAGE_OFFS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
     ret
+
+util_busy_disk_read:
+    # a0 = ptr_to_data, a1 = length, a2 = src_in_disk (offset), s10 = src_in_disk (page)
+    # this function performs byte-alligned copying
+    # preserve arg registers to avoid setting locals
+
+    # t0 & t1 are scratch
+    util_busy_disk_read_loop:
+
 
