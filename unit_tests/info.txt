@@ -1,0 +1,7 @@
+UNIT TESTS INTENDED FOR TESTING NEW/WIP FEATURES IN ISOLATION
+
+EACH FILE INSIDE THIS DIRECTORY IS INTENDED TO BE ASSEMBLED AS AN ENTRY FILE, SEE BELOW ->
+
+~assemble & run ~
+(in this example you would need a debug dir for the debug/test.bin target):
+b16 -ar unit_tests/my_test.asm debug/test.bin

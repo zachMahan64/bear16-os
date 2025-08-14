@@ -1,4 +1,4 @@
-# TEST.ASM
+# UNIT_TESTS/T_DISK_IO.ASM
 # PURELY FOR TESTING/DEBUGGING PURPOSES
 
 @include "util/disk_io.asm"
@@ -20,7 +20,19 @@ test_start:
     call util_busy_disk_write
 
     # TEST DISK READING
+    mov a0, 32 # dest in ram
+    mov a1, TESTING_STRING_LEN # length
+    mov a2, 0 # disk addr low
+    mov s10, 0 # disk addr high
+    call util_busy_disk_read
 
+    mov a0, 2 # line
+    mov a1, 0 # idx
+    mov a2, 32 # char*
+    call blit_strl_ram
+
+    inc a0
+    call blit_strl_ram
 
     # STALL AT THE END OF EXEC
     call util_stall_esc

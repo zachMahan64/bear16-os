@@ -170,6 +170,9 @@ blit_cl_inv:
     ret
 blit_strl_rom:
     #a0 = line, a1 = index, a2 = char* (rom addr), s10 = bool updateCursorPtr
+    push a0
+    push a1
+    push a2
     mov t5, a2 # current char ptr
     blit_strl_rom_loop:
         lbrom a2, t5 # a2 <- *char
@@ -186,6 +189,9 @@ blit_strl_rom:
         ugt blit_strl_rom_do_update_cursor, s10, 0 # if s10 == true
         blit_strl_rom_do_update_cursor_exit:
         clr s10       # reset this val (do not reuse, defaults to do not update)
+        pop a2
+        pop a1
+        pop a0
         ret
     blit_strl_rom_newline:
         inc a0
@@ -202,6 +208,11 @@ blit_strl_rom:
 blit_strl_rom_inv:
     # inverted!
     #a0 = line, a1 = index, a2 = char* (rom addr), s10 = bool updateCursorPtr
+
+    push a0
+    push a1
+    push a2
+
     mov t5, a2 # current char ptr
     blit_strl_rom_inv_loop:
         lbrom a2, t5 # a2 <- *char
@@ -218,6 +229,9 @@ blit_strl_rom_inv:
         ugt blit_strl_rom_inv_do_update_cursor, s10, 0 # if s10 == true
         blit_strl_rom_inv_do_update_cursor_exit:
         clr s10       # reset this val (do not reuse, defaults to do not update)
+        pop a2
+        pop a1
+        pop a0
         ret
     blit_strl_rom_inv_newline:
         inc a0
@@ -233,6 +247,10 @@ blit_strl_rom_inv:
 
 blit_strl_ram:
     #a0 = line, a1 = index, a2 = char* (ram addr), s10 = bool updateCursorPtr
+    push a0
+    push a1
+    push a2
+    # leave defaulted to false for being explicit
     mov t5, a2 # current char ptr
     bstrl_ram_loop:
         lb a2, t5 # a2 <- *char
@@ -249,6 +267,9 @@ blit_strl_ram:
         ugt bstrl_ram_do_update_cursor, s10, 0 # if s10 == true
         bstrl_ram_do_update_cursor_exit:
         clr s10       # reset this val (do not reuse, defaults to do not update)
+        pop a2
+        pop a1
+        pop a0
         ret
     bstrl_ram_newline:
         inc a0

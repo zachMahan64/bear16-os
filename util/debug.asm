@@ -27,16 +27,16 @@ util_debug_print_tf:
 util_debug_print_rom:
     # a0 = char* in rom
     mov a2, a0
-    mov a0, 0
+    mov a0, s1 # reserved cursor ptr
     mov a1, 0
     mov s10, TRUE
     call blit_strl_rom
     ret
 
 util_debug_print_ram:
-    # a0 = char* in rom
+    # a0 = char* in ram
     mov a2, a0
-    mov a0, 0
+    mov a0, s1 # reserved cursor ptr
     mov a1, 0
     mov s10, TRUE
     call blit_strl_ram

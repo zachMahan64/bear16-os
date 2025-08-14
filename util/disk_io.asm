@@ -29,6 +29,12 @@
 util_busy_disk_write:
     # a0 = ptr_to_data, a1 = length, a2 = dest_in_disk (offset), s10 = dest_in_disk (page)
     # this function performs byte-alligned copying
+
+    # guard against len = 0
+    ne util_busy_disk_write_guard_exit, a1, 0
+    ret
+    util_busy_disk_write_guard_exit:
+
     # LOCALS SET UP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     .const UTIL_BUSY_DISK_WRITE_DATA_PTR_OFFS = -2
     .const UTIL_BUSY_DISK_WRITE_LEN_OFFS = -4
@@ -65,16 +71,11 @@ util_busy_disk_write:
         sb t6, WRITE_BYTE_OP
         util_busy_disk_write_loop_lock:
             lb t6, DISK_STATUS
-            # TODO bug: inf loop inside the lock
-            # i believe the bug must be that the disk is not giving the WRITE_DONE status
             ne util_busy_disk_write_loop_lock, t6, WRITE_DONE
-            mov t6, DISK_STATUS
-            sb t6, READY
+        mov t6, DISK_STATUS
+        sb t6, READY
         inc t4
         ult util_busy_disk_write_loop, t4, t1 # loop while cnt < data length
-
-    mov a0, TRUE # debug
-    call util_debug_print_tf # debug
 
     # RESTORE ARGS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     lw a0, fp, UTIL_BUSY_DISK_WRITE_DATA_PTR_OFFS
@@ -87,19 +88,36 @@ util_busy_disk_write:
 util_busy_disk_read:
     # a0 = ptr_to_ram, a1 = length, a2 = src_in_disk (offset), s10 = src_in_disk (page)
     # this function performs byte-alligned copying
-    # preserve arg registers to avoid setting locals
+    # preserves argument registers to avoid setting locals
+
+    # guard against len = 0
+    ne util_busy_disk_read_guard_exit, a1, 0
+    ret
+    util_busy_disk_read_guard_exit:
 
     # t0 & t1 are scratch
     clr t2 # cnt
     util_busy_disk_read_loop:
         # set up for disk operation
         mov t0, DISK_ADDR_LO
-        sw t0, a2, t2 # [to] <- src_in_disk_offset + cnt
-        // TODO WIP
+        sw t0, a2, t2 # [DISK_ADDR_LO] <- src_in_disk_offset + cnt
+        mov t0, DISK_ADDR_HI
+        sw t0, s10 # [DISK_ADDR_HI] <- src_in_disk_page
+
+        # set disk operation
+        mov t0, DISK_OP
+        sb t0, READ_BYTE_OP
         util_busy_disk_read_loop_lock:
-            # JMP BACK TO LOCK
+            lb t0, DISK_STATUS
+            ne util_busy_disk_read_loop_lock, t0, READ_DONE
+        # get data into ram
+        lb t1, DISK_DATA # t1 <- [DISK_DATA]
+        sb a0, t2, t1 # [ptr_to_ram + offset] <- DISK_DATA
+        # reset status
+        mov t0, DISK_STATUS
+        sb t0, READY
         inc t2
-        ult util_busy_disk_read_loop, t2, a1
+        ult util_busy_disk_read_loop, t2, a1 # while cnt < len
     ret
 
 
