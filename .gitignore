@@ -1,0 +1,37 @@
+# misc
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# Logs
+*.log
+
+# binaries
+*.bin
+
+
+# build
+dist*/
+build*/
+target*/
+debug*/
+
+# ide
+.idea/
+.vscode/
+
+# python
+*.pyc
+*.pyo
+.pytest_cache/
+__pycache__/
+.mypy_cache/
+
+
+# env
+.venv/
+venv/
+env/
