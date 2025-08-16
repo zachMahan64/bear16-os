@@ -109,7 +109,7 @@ cd_isolate_cmd: #nf
     #reuse rv (ptr to start of cmd from malloc)
     ret
 cd_isolate_args: #nf
-.const ARGS_MAX_SIZE = 60
+.const ARGS_MAX_SIZE = 62
     # a0 = ptr to start of cmd buffer
     # ~ rv = ptr to start of newly isolated args buffer
     push a0 # save char* to orig buffer to t0
