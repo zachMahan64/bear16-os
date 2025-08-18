@@ -330,7 +330,8 @@ con_echo:
     # reuse a0
     inc s1
     call check_to_scroll_using_strlen_ram
-    call con_print_cname
+    #call con_print_cname # commented if we shouldn't print cname!
+    mov s0, 0 # reset cursor idx
     mov a0, s1 # line
     mov a1, s0 # index
     lw a2, fp, CON_ECHO_PTR_TO_ARGS_OFFS
