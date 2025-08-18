@@ -411,7 +411,7 @@ con_hey_str:
 con_help:
 .data
 con_help_str:
-    .string "See the bear16 repo on \n     Github for help!"
+    .string "See the bear16_os repo on \n     Github for help!"
 .text
     mov a0, con_help_str
     call con_scroll_purely_visual_using_strlen_rom
@@ -445,3 +445,5 @@ con_login:
     call os_gfx_login_screen
     call con_reset_console
     ret
+con_kill:
+    hlt # just kill the process
