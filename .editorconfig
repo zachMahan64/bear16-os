@@ -1,9 +1,9 @@
 # https://editorconfig.org
-
+# lf line endings is most critical
 root = true
 
 [*]
-end_of_line = lf # critical!
+end_of_line = lf
 insert_final_newline = true
 charset = utf-8
 trim_trailing_whitespace = true
