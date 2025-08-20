@@ -65,14 +65,14 @@ os_init_taskbar:
             #MON
             mov a0, 23 # line
             mov a1, 17 # index
-            lb a2, MONTHS_PTR_MEM_LOC
+            lb a2, MONTHS_MEM_LOC
             mult a2, a2, MONTH_STR_ARRAY_ENTRY_SIZE
             add a2, a2, month_str_array
             call blit_strl_rom
             #YEAR
             mov a0, 23 # line
             mov a1, 11 # index
-            lw a2, YEARS_PTR_MEM_LOC
+            lw a2, YEARS_MEM_LOC
             call blit_4dig_pint
             ret
 os_update:
@@ -82,7 +82,7 @@ os_update:
         # SECONDS
         mov a0, 23 # line
         mov a1, 30 # index
-        lb a2, SECONDS_PTR_MEM_LOC
+        lb a2, SECONDS_MEM_LOC
         call blit_2dig_pint
         mov a0, 23 # line
         mov a1, 29 # index
@@ -91,7 +91,7 @@ os_update:
         #MINUTES
         mov a0, 23 # line
         mov a1, 27 # index
-        lb a2, MINUTES_PTR_MEM_LOC
+        lb a2, MINUTES_MEM_LOC
         call blit_2dig_pint
         mov a0, 23 # line
         mov a1, 26 # index
@@ -100,7 +100,7 @@ os_update:
         #HOURS
         mov a0, 23 # line
         mov a1, 24 # index
-        lb a2, HOURS_PTR_MEM_LOC
+        lb a2, HOURS_MEM_LOC
         call blit_2dig_pint
         mov a0, 23 # line
         mov a1, 23 # index
@@ -109,7 +109,7 @@ os_update:
         #DAYS
         mov a0, 23 # line
         mov a1, 21 # index
-        lb a2, DAYS_PTR_MEM_LOC
+        lb a2, DAYS_MEM_LOC
         call blit_2dig_pint
         # DAYS, MONTHS, YEARS generated in init
         ret

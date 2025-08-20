@@ -1,0 +1,12 @@
+- blocks:
+    - 16 MB total disk space - > 4096 x 4 KB (4096 byte) blocks -> each block id is 12 bits (so << 12 to address them)
+    - 1st block holds metadata (0 = free, non-zero = used), rest are free blocks
+- file structure {
+    {62 byte: char field to hold name (so max 61 char long for null term}
+    {12 bit:  little endian ptr storing block-id of next block (ptr is 12bit so use an 0xFFF mask, null = no next block)},
+    { 4 bit:  directory flag (0 = file, non-zero = dir, stored in MSBits of MSByte of block-id ptr)},
+    {... file contents}
+}
+- directory structure {
+    WIP
+}

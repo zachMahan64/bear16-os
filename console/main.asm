@@ -448,3 +448,12 @@ con_login:
     ret
 con_kill:
     hlt # just kill the process
+con_force_error:
+.data
+    con_force_error_str:
+    .string "FORCED ERROR BY SHELL"
+.text
+    mov a0, con_force_error_str
+    call util_error_throw
+    ret
+
