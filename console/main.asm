@@ -354,6 +354,7 @@ con_cmd_not_found_str:
 .text
     call check_to_scroll
     inc s1 # increment line
+    clr s0 # clear index
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_cmd_not_found_str
