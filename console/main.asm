@@ -301,7 +301,7 @@ con_empty:
 con_success:
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_succ_str
@@ -312,7 +312,7 @@ con_success:
 con_error:
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_err_str
@@ -354,7 +354,6 @@ con_cmd_not_found_str:
 .text
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_cmd_not_found_str
@@ -369,7 +368,7 @@ con_hello_world_str:
 .text
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_hello_world_str
@@ -385,7 +384,7 @@ con_hi_str:
 .text
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_hi_str
@@ -400,7 +399,7 @@ con_hey_str:
 .text
     call check_to_scroll
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_hey_str
@@ -412,12 +411,12 @@ con_hey_str:
 con_help:
 .data
 con_help_str:
-    .string "See the bear16_os repo on \n     Github for help!"
+    .string "See the bear16_os repo on Github for help!"
 .text
     mov a0, con_help_str
     call con_scroll_purely_visual_using_strlen_rom
     inc s1 # increment line
-    call con_print_cname
+    clr s0
     mov a0, s1 # line
     mov a1, s0 # index
     mov a2, con_help_str
@@ -454,6 +453,6 @@ con_force_error:
     .string "FORCED ERROR BY SHELL"
 .text
     mov a0, con_force_error_str
-    call util_error_throw
+    call util_error_system_critical
     ret
 
