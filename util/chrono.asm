@@ -4,6 +4,7 @@
 @include"text_processing.asm"
 .data
 # MEM-MAPPED CLOCK MEM_LOC CONSTANTS
+.const TIME_SIZE = 8
 # offsets
 .const FRAMES_OFFS = 0
 .const SECONDS_OFFS = 1
@@ -40,7 +41,7 @@
 # word years
 # }
 .const UTIL_CHRONO_TIME_SIZE = 8
-util_chrono_time_capture: # WIP
+util_chrono_time_capture:
 # a0 = ptr to time to build
     lb t0, FRAMES_MEM_LOC
     sb a0, t0
@@ -86,6 +87,7 @@ util_chrono_frametime_check_elapsed:
         ret
 
 # BLIT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+util_chrono_blit_date: # alias
 util_chrono_blit_long_format_date_line_idx:
 # a0 = starting line
 # a1 = starting idx

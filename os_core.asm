@@ -10,6 +10,7 @@
 @include "util/math.asm"
 @include "util/blit.asm"
 @include "util/error.asm"
+@include "util/constants.asm"
 
 .data
 
