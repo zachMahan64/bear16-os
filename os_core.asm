@@ -61,56 +61,14 @@ os_init_taskbar:
             ult subr_init_os_draw_bottom_line_loop, s2, 32
             ret
 os_update:
-    call os_update_time_display
+    #call os_update_time_display
+    mov a0, 23
+    mov a1, 12
+    mov a2, SYS_TIME # current system time
+    call util_chrono_blit_long_format_date_line_idx
     ret
-    os_update_time_display:
-        # SECONDS
-        mov a0, 23 # line
-        mov a1, 30 # index
-        lb a2, SECONDS_MEM_LOC
-        call blit_2dig_pint
-        mov a0, 23 # line
-        mov a1, 29 # index
-        mov a2, ':'
-        call blit_cl
-        #MINUTES
-        mov a0, 23 # line
-        mov a1, 27 # index
-        lb a2, MINUTES_MEM_LOC
-        call blit_2dig_pint
-        mov a0, 23 # line
-        mov a1, 26 # index
-        mov a2, ':'
-        call blit_cl
-        #HOURS
-        mov a0, 23 # line
-        mov a1, 24 # index
-        lb a2, HOURS_MEM_LOC
-        call blit_2dig_pint
-        mov a0, 23 # line
-        mov a1, 23 # index
-        mov a2, ','
-        call blit_cl
-        #DAYS
-        mov a0, 23 # line
-        mov a1, 21 # index
-        lb a2, DAYS_MEM_LOC
-        call blit_2dig_pint
-        #MON
-        mov a0, 23 # line
-        mov a1, 17 # index
-        lb a2, MONTHS_MEM_LOC
-        mult a2, a2, MONTH_STR_ARRAY_ENTRY_SIZE
-        add a2, a2, month_str_array
-        call blit_strl_rom
-        #YEAR
-        mov a0, 23 # line
-        mov a1, 11 # index
-        lw a2, YEARS_MEM_LOC
-        call blit_4dig_pint
-        ret
 os_init_heap:
-    # INIT HEAP PTR
+# INIT HEAP PTR
     lea t0, TOP_OF_HEAP_PTR
     sw t0, STARTING_HEAP_PTR_VALUE
     # INIT FREE LIST

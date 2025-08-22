@@ -308,6 +308,7 @@ blit_strl_ram:
         push a0
         push a1
         push a2
+        push s2
         mod t0, a2, 10 # ones place
         push t0
         div t0, a2, 10  # tens place
@@ -329,6 +330,7 @@ blit_strl_ram:
             uge blit_4dig_pint_ret, s2, 4
             jmp blit_4dig_pint_loop
         blit_4dig_pint_ret:
+            pop s2
             pop a2
             pop a1
             pop a0

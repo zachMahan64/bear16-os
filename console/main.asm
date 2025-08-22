@@ -457,3 +457,6 @@ con_force_error:
     call util_error_system_critical
     ret
 
+con_reset:
+    call con_reset_console
+    ret

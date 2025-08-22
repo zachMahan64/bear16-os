@@ -1,16 +1,30 @@
 # UTIL/CHRONO.ASM
 # REG CONV: Overload s10 to a3 & s9 to a4, {s0 = index ptr, s1 = line ptr} -> for cursor
 @include "util/constants.asm"
+@include"text_processing.asm"
 .data
 # MEM-MAPPED CLOCK MEM_LOC CONSTANTS
+# offsets
+.const FRAMES_OFFS = 0
+.const SECONDS_OFFS = 1
+.const MINUTES_OFFS = 2
+.const HOURS_OFFS = 3
+.const DAYS_OFFS = 4
+.const MONTHS_OFFS = 5
+.const YEARS_OFFS = 6
+# general time struct constants/mem-mappings
 .const UTIL_CHRONO_SYS_TIME_MEM_LOC = 6147
-.const FRAMES_MEM_LOC = 6147
-.const SECONDS_MEM_LOC = 6148
-.const MINUTES_MEM_LOC = 6149
-.const HOURS_MEM_LOC = 6150
-.const DAYS_MEM_LOC = 6151
-.const MONTHS_MEM_LOC = 6152
-.const YEARS_MEM_LOC = 6153
+.const SYS_TIME = (UTIL_CHRONO_SYS_TIME_MEM_LOC) # alias for easier use
+.const FRAMES_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + FRAMES_OFFS)
+.const SECONDS_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + SECONDS_OFFS)
+.const MINUTES_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + MINUTES_OFFS)
+.const HOURS_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + HOURS_OFFS)
+.const DAYS_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + DAYS_OFFS)
+.const MONTHS_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + MONTHS_OFFS)
+.const YEARS_MEM_LOC = (UTIL_CHRONO_SYS_TIME_MEM_LOC + YEARS_OFFS)
+
+# frametime constants
+.const CONT_FRAMES_MEM_LOC = 6155
 .const CONT_FRAMES_MEM_LOC_LO = 6155
 .const CONT_FRAMES_MEM_LOC_HI = 6156
 .text
@@ -46,12 +60,14 @@ util_chrono_time_capture: # WIP
 util_chrono_time_compare:
 # a0 = ptr to LHS time
 # a1 = ptr to RHS time
+# rv = (<LHS_is_greater>) ? 1 : 0
     ret
 
 # FRAMETIME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # uint16 frametime
 util_chrono_frametime_capture:
 # rv = current frametime
+    lw rv, CONT_FRAMES_MEM_LOC
     ret
 
 util_chrono_frametime_check_elapsed:
@@ -68,3 +84,65 @@ util_chrono_frametime_check_elapsed:
     util_chrono_frametime_check_elapsed_false:
         mov rv, FALSE
         ret
+
+# BLIT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+util_chrono_blit_long_format_date_line_idx:
+# a0 = starting line
+# a1 = starting idx
+# a2 = time*
+    push s2
+    mov s2, a2 # hold time*
+    dec a1 # for proper alignment
+    #YEAR
+    # a0 = a0 from call
+    # a1 = a1 from call
+    lw a2, s2, YEARS_OFFS
+    call blit_4dig_pint
+
+    #MON
+    add a1, a1, 6
+    lb a2, s2, MONTHS_OFFS
+    mult a2, a2, MONTH_STR_ARRAY_ENTRY_SIZE
+    add a2, a2, month_str_array
+    call blit_strl_rom
+
+    #DAYS
+    add a1, a1, 4
+    lb a2, s2, DAYS_OFFS
+    call blit_2dig_pint
+
+    # COMMA
+    add a1, a1, 2
+    mov a2, ','
+    call blit_cl
+
+    #HOURS
+    inc a1
+    lb a2, s2, HOURS_OFFS
+    call blit_2dig_pint
+
+    #MINUTES
+    add a1, a1, 3
+    lb a2, s2, MINUTES_OFFS
+    call blit_2dig_pint
+
+    # COLON
+    #mov a0, 23 # line
+    #mov a1, 26 # index
+    dec a1
+    mov a2, ':'
+    call blit_cl
+
+    # SECONDS
+    add a1, a1, 4
+    lb a2, s2, SECONDS_OFFS
+    call blit_2dig_pint
+
+    # COLON
+    dec a1
+    mov a2, ':'
+    call blit_cl
+
+    pop s2
+    ret
+
