@@ -24,6 +24,7 @@ cmd_table:
     .word cmdt_login, con_login
     .word cmdt_kill, con_kill
     .word cmdt_ferror, con_force_error
+    .word cmdt_reset, con_reset
 # ADD JUMP LINKS HERE, EQUIVALENT TO ADDING TO PATH #
 # this aliases the names of apps as commands!
     .word app_dis_notepad, notepad_main
@@ -56,6 +57,8 @@ cmd_table_strings:
         .string "kill"
     cmdt_ferror:
         .string "ferror"
+    cmdt_reset:
+        .string "reset"
 @include "console/app_name_table.asm" # add custom apps inside this file
 .text
 # DISPATCHING FUNCTIONS
