@@ -1,12 +1,18 @@
 - blocks:
     - 16 MB total disk space - > 4096 x 4 KB (4096 byte) blocks -> each block id is 12 bits (so << 12 to address them)
-    - 1st block holds metadata (0 = free, non-zero = used), rest are free blocks
+    - first 3 block holds metadata
+    - first block = array of 4096 bytes correspond to each block (0 = free, non-zero = used)
+    - 2nd and 3rd block hold FAT
+->FAT structure = array of 4096 uint16 where each entry is mapped to a block (when FAT[idx] is non-zero = ptr to next block in file chain, FAT[idx] = 0 is terminator/EOF)
+    - address 0, 1, & 2 are inherently reserved
 - file structure {
-    {62 byte: char field to hold name (so max 61 char long for null term}
-    {12 bit:  little endian ptr storing block-id of next block (ptr is 12bit so use an 0xFFF mask, null = no next block)},
-    { 4 bit:  directory flag (0 = file, non-zero = dir, stored in MSBits of MSByte of block-id ptr)},
     {... file contents}
 }
-- directory structure {
-    WIP
+- directory {
+    file_entry = {
+        {61 byte: char field to hold name (so max 61 char long for null term}
+        {2 bytes:  little endian ptr storing starting block-id of file},
+        {1 byte:  flag (0x1 = file/dir)},
+    }
+    ... files can appened by searching file entries by reading each 64 byte interval and checking if the first byte is null -> since filename can't be empty, a null at file_entry[0] = 0 means this file_entry region is unoccupied
 }
