@@ -3,6 +3,7 @@
 @include "util/constants.asm"
 .data
 # MEM-MAPPED CLOCK MEM_LOC CONSTANTS
+.const UTIL_CHRONO_SYS_TIME_MEM_LOC = 6147
 .const FRAMES_MEM_LOC = 6147
 .const SECONDS_MEM_LOC = 6148
 .const MINUTES_MEM_LOC = 6149

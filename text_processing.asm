@@ -286,6 +286,9 @@ blit_strl_ram:
 # NUMBER BLITING
     blit_2dig_pint:
         # a0 = line, a1 = index, a2 = num
+        push a0
+        push a1
+        push a2
         div t0, a2, 10 # tens digit
         mod t1, a2, 10 # ones digit
         push t1
@@ -296,9 +299,15 @@ blit_strl_ram:
         pop t1         # recover ones digit
         add a2, t1, 48 # t1 (ones digit) -> a2 & add 48 to get char val from num val
         call blit_cl
+        pop a2
+        pop a1
+        pop a0
         ret
     blit_4dig_pint:
         # a0 = line, a1 = index, a2 = num
+        push a0
+        push a1
+        push a2
         mod t0, a2, 10 # ones place
         push t0
         div t0, a2, 10  # tens place
@@ -320,8 +329,17 @@ blit_strl_ram:
             uge blit_4dig_pint_ret, s2, 4
             jmp blit_4dig_pint_loop
         blit_4dig_pint_ret:
+            pop a2
+            pop a1
+            pop a0
             ret
     blit_bnum:
+        push a0
+        push a1
+        push a2
+        push s10
+        push s9
+        push s8
         #a0 = line, a1 = index, a2 = num, s10 = l/r, s9 = shift down pixels (1:1 row of pix), s8 = clobber (TRUE/FALSE)
         mult t1, s9, LINE_WIDTH_B # this t1 will later get safely overwritten
         mult t0, a0, LINE_SIZE    # set line
@@ -344,6 +362,12 @@ blit_strl_ram:
             add t1, t1, BNUMS_LINE_WIDTH_B # t1 += 10
             inc t2                # t2++
             ult bbnum_loop, t2, 6 # check cnt
+        pop s8
+        pop s9
+        pop s10
+        pop a2
+        pop a1
+        pop a0
         ret
         bbnum_left:
             add t1, a2, baby_nums_l

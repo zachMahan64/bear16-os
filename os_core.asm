@@ -49,7 +49,6 @@ os_init:
     ret
 os_init_taskbar:
     call subr_init_os_draw_bottom_line
-    call subr_init_month_year      # initialize dates (static/non updated until restart) -> note: may cause inaccuracies
     ret
     subr_init_os_draw_bottom_line:
         clr s2 # cnt & index
@@ -60,20 +59,6 @@ os_init_taskbar:
             call blit_cl
             inc s2
             ult subr_init_os_draw_bottom_line_loop, s2, 32
-            ret
-        subr_init_month_year:
-            #MON
-            mov a0, 23 # line
-            mov a1, 17 # index
-            lb a2, MONTHS_MEM_LOC
-            mult a2, a2, MONTH_STR_ARRAY_ENTRY_SIZE
-            add a2, a2, month_str_array
-            call blit_strl_rom
-            #YEAR
-            mov a0, 23 # line
-            mov a1, 11 # index
-            lw a2, YEARS_MEM_LOC
-            call blit_4dig_pint
             ret
 os_update:
     call os_update_time_display
@@ -111,7 +96,18 @@ os_update:
         mov a1, 21 # index
         lb a2, DAYS_MEM_LOC
         call blit_2dig_pint
-        # DAYS, MONTHS, YEARS generated in init
+        #MON
+        mov a0, 23 # line
+        mov a1, 17 # index
+        lb a2, MONTHS_MEM_LOC
+        mult a2, a2, MONTH_STR_ARRAY_ENTRY_SIZE
+        add a2, a2, month_str_array
+        call blit_strl_rom
+        #YEAR
+        mov a0, 23 # line
+        mov a1, 11 # index
+        lw a2, YEARS_MEM_LOC
+        call blit_4dig_pint
         ret
 os_init_heap:
     # INIT HEAP PTR

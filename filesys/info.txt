@@ -3,7 +3,7 @@
     - first 3 block holds metadata
     - first block = array of 4096 bytes correspond to each block (0 = free, non-zero = used)
     - 2nd and 3rd block hold FAT
-->FAT structure = array of 4096 uint16 where each entry is mapped to a block (when FAT[idx] is non-zero = ptr to next block in file chain, FAT[idx] = 0 is terminator/EOF)
+- FAT structure = array of 4096 uint16 where each entry is mapped to a block (when FAT[idx] is non-zero = ptr to next block in file chain, FAT[idx] = 0 is terminator/EOF)
     - address 0, 1, & 2 are inherently reserved
 - file structure {
     {... file contents}

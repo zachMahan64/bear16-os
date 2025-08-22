@@ -251,7 +251,7 @@ check_to_scroll_using_strlen_rom:
 .const NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_20th = 5120 # LINE WIDTH * NUM LINES = 256 * 20
 con_scroll_once_purely_visual:
     lea t0, FB_LOC
-    memcpy FB_LOC, START_FIRST_LINE_IDX, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st
+    memcpy t0, START_FIRST_LINE_IDX, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st
 
     mov t0, NUM_BYTES_FROM_FIRST_LINE_TO_END_OF_21st
     add t1, t0, 256 # end loop val
