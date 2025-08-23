@@ -4,6 +4,7 @@
 @include "console/dispatch.asm"
 @include "console/open.asm"
 @include "gfx/main.asm"
+@include "util/blit.asm"
 
 .data
 .const CON_STRT_LINE = 3
@@ -65,14 +66,13 @@ con_get_line:
     mov s3, rv #get the ptr to the buffer from good ol malloc
     .const BUFFER_START_PTR_OFFS = -2
     push rv # push BUFFER_START_PTR_OFFS -> offset = -2
-    call con_print_cname # WIP, later print username
+    call con_print_cname
     con_get_line_loop:
     call os_update
     call check_to_scroll
-    mov a0, s1  # line ptr
-    mov a1, s0  # index ptr
-    mov a2, '_' # underscore for our cursor
-    call blit_cl
+
+    call blit_cursor
+
     lb s2, IO_LOC            # save inp from IO
     eq subr_con_backspace, s2, 8 # for backspace
     eq subr_con_newline, s2, 13  # for newline
@@ -81,6 +81,7 @@ con_get_line:
     # ~~~~~~~~~~~~~~~~~~~~~~ # branch divide
     ugt subr_con_print_new_char, s2, 0
     jmp con_get_line_loop
+    lw rv, fp, BUFFER_START_PTR_OFFS
     ret
     subr_con_print_new_char:
         # s0 = current char* to print
@@ -138,6 +139,10 @@ con_get_line:
             mov a2, ' ' # space for blank
             call blit_cl
             dec s0
+            mov a0, s1
+            mov a1, s0
+            # a2 = ' '
+            call blit_cl
             lt ssubr_con_backline, s0, 0
             ssubr_con_backline_exit:
             lea t0, IO_LOC # ->
@@ -159,7 +164,7 @@ con_get_line:
             call blit_cl
             lea t0, IO_LOC # ->
             sb t0, 0       # clear IO memory location
-            # rv should still point to the start of buffer from the malloc call
+            lw rv, fp, BUFFER_START_PTR_OFFS # retrieve start of buffer
             ret # dip outta here
         subr_con_tab:
             #BUFFER WRITE----------------#

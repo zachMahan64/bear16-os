@@ -4,6 +4,7 @@
 
 @include "text_processing.asm"
 @include "os_core.asm"
+@include "util/blit.asm"
 
 
 .data
@@ -23,10 +24,7 @@ notepad_main:
     call notepad_init
     notepad_loop:
     call os_update
-    mov a0, s1  # line ptr
-    mov a1, s0  # index ptr
-    mov a2, '_' # underscore for our cursor
-    call blit_cl
+    call blit_cursor
     lb s2, IO_LOC            # save inp from IO
     # K_... constants from text_processing.asm
     eq notepad_subr_backspace, s2, K_BACKSPACE # for backspace
@@ -80,6 +78,10 @@ notepad_main:
             mov a2, ' ' # space for blank
             call blit_cl
             dec s0
+            mov a0, s1
+            mov a1, s0
+            # a2 = ' '
+            call blit_cl
             eq notepad_snotepad_subr_backline_exit, s1, 0 # clamp if line ptr = 0
             lt notepad_snotepad_subr_backline, s0, 0
             notepad_snotepad_subr_backline_exit:
