@@ -69,21 +69,16 @@ tictactoe_enter_title_page:
         sb t1, 0 # clear
     ret
 tictactoe_play:
-   # init UI
-    call util_clr_fb
-
+    # init screen
+    call util_clr_fb # clear whole screen
     mov a0, 1
     mov a1, 0
-    mov a2, tictactoe_in_game_title_str
+    mov a2, tictactoe_in_game_title_str # just the header text
     call blit_strl_rom
 
-    mov a0, 3
-    mov a1, 0
-    mov a2, tictactoe_turn_1
-    call blit_strl_rom
-
+    # LOCALS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # init board
-    call tictactoe_blit_board
+    call tictactoe_blit_board # blits an empty board
     # struct Board -> char[9] where each byte can either be 0 (empty), 1 (X), or 2 (O)
     .const TTT_PLAY_BOARD_ARR_OFFS = -9
     .const TTT_PLAY_BOARD_ARR_SIZE = 9
@@ -92,11 +87,23 @@ tictactoe_play:
     .const TTT_PLAY_BOARD_ARR_O = 2
     mov a0, TTT_PLAY_BOARD_ARR_SIZE
     jal util_sallocz
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    # board ^^^^^^^^^^#
 
-    # --> main loop should go here
+    # byte turn
+    # player 1's turn = 0 and player 2's turn = 1 (X and O respectively)
+    .const TTT_TURN_OFFS = -10
+    sub sp, sp, 1
+    sb fp, TTT_TURN_OFFS, 0 # initialize to 0 aka Player one's turn
+    # LOCALS  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
+    # MAIN LOOP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
     # TESTING/WIP ~~~~~~~~~~~#
+    mov a0, 3
+    mov a1, 0
+    mov a2, tictactoe_turn_1
+    call blit_strl_rom
+
     add t0, fp, TTT_PLAY_BOARD_ARR_OFFS
     sb t0, 8, 1 # board[src1] = X
     sb t0, 5, 2
@@ -104,6 +111,10 @@ tictactoe_play:
     add a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
     call ttt_blit_game_state
     #~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+    # MAIN LOOP ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+
 
 
     call util_stall_esc # temporary

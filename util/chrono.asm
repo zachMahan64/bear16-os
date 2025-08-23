@@ -86,6 +86,23 @@ util_chrono_frametime_check_elapsed:
         mov rv, FALSE
         ret
 
+util_chrono_sleep_frames:
+# a0 = frames for which to sleep
+    push a0 # to preserve
+    push a1 # ^
+    mov a1, a0 # put frames into right arg
+    call util_chrono_frametime_capture # takes no args btw
+    mov a0, rv
+    util_chrono_sleep_frames_loop:
+        # a0 set ^
+        # a1 already set
+        call util_chrono_frametime_check_elapsed
+        eq util_chrono_sleep_frames_loop, rv, FALSE # loop while elapsed = false
+    pop a1 # preserve
+    pop a0 # ^
+    ret
+
+
 # BLIT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 util_chrono_blit_date: # alias
 util_chrono_blit_long_format_date_line_idx:
