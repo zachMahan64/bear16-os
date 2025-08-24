@@ -77,6 +77,11 @@ tictactoe_play:
     mov a2, tictactoe_in_game_title_str # just the header text
     call blit_strl_rom
 
+    mov a0, 17
+    mov a1, 1
+    mov a2, ttt_tile_nums_str
+    call blit_strl_rom
+
     # LOCALS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # init board
     call tictactoe_blit_board # blits an empty board
@@ -395,4 +400,7 @@ tictactoe_blit_turn_str:
     mov a2, tictactoe_turn_str_x
     jmp tictactoe_blit_turn_str_do_blit
 
-
+tictactoe_get_input:
+# a0 = board*
+# a1 = turn
+    ret

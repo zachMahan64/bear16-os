@@ -141,3 +141,6 @@ ttt_o_map_3:
 .byte 0b00000000
 .byte 0b00000000
 ttt_o_map_end:
+
+ttt_tile_nums_str:
+    .string "1|2|3\n -+-+-\n 4|5|6\n -+-+-\n 7|8|9"
