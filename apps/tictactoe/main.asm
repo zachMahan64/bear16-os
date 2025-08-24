@@ -3,6 +3,7 @@
 @include "text_processing.asm"
 @include "os_core.asm"
 @include "util/blit.asm"
+@include "console/main.asm" # for proper console integration
 
 @include "apps/tictactoe/assets.asm"
 
