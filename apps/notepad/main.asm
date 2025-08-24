@@ -51,6 +51,7 @@ notepad_main:
         jmp notepad_loop
         notepad_subr_go_on_newline:
             inc s1 # next line!
+            eq notepad_subr_go_on_newline_too_far, s1, 22 # too far!
             clr s0 # set index on line back to zero
             jmp notepad_loop
         notepad_subr_shift:
@@ -73,6 +74,8 @@ notepad_main:
                     jmp notepad_subr_shift_exit
         notepad_subr_backspace:
             #clear @ current spot
+            or t1, s0, s1 # s0 | s1
+            eq notepad_snotepad_subr_backline_exit, t1, 0 # clamp if both line & idx are 0
             mov a0, s1  # line ptr
             mov a1, s0  # index ptr
             mov a2, ' ' # space for blank
@@ -100,6 +103,7 @@ notepad_main:
             lea t0, IO_LOC # ->
             sb t0, 0       # clear IO memory location
             inc s1
+            eq notepad_too_far, s1, 22 # too far!
             clr s0
             jmp notepad_loop
         notepad_subr_tab:
@@ -117,6 +121,13 @@ notepad_main:
             call notepad_exit
             # back to console
             ret
+        notepad_too_far:
+            dec s1
+            jmp notepad_loop
+        notepad_subr_go_on_newline_too_far:
+            dec s1
+            dec s0
+            jmp notepad_loop
 
 notepad_init:
     call notepad_init_os_bar

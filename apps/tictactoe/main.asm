@@ -20,7 +20,7 @@ tictactoe_in_game_title_str:
     .string " TIC-TAC-TOE: Ultimate Edition"
 
 tictactoe_turn_x:
-    .string "X's TURN"
+    .string "X\'s TURN"
 
 tictactoe_turn_o:
     .string "O\'S TURN"
