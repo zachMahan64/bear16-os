@@ -19,11 +19,11 @@ tictactoe_title_esc_prompt_str:
 tictactoe_in_game_title_str:
     .string " TIC-TAC-TOE: Ultimate Edition"
 
-tictactoe_turn_x:
+tictactoe_turn_str_x:
     .string "X\'s TURN"
 
-tictactoe_turn_o:
-    .string "O\'S TURN"
+tictactoe_turn_str_o:
+    .string "O\'s TURN"
 
 
 .text
@@ -91,27 +91,40 @@ tictactoe_play:
 
     # byte turn
     # player 1's turn = 0 and player 2's turn = 1 (X and O respectively)
+    .const TTT_TURN_X = 0
+    .const TTT_TURN_O = 1
     .const TTT_TURN_OFFS = -10
     sub sp, sp, 1
-    sb fp, TTT_TURN_OFFS, 0 # initialize to 0 aka Player one's turn
+    sb fp, TTT_TURN_OFFS, TTT_TURN_X # initialize to player x's turn, which is an alias for 0
     # LOCALS  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 
     # MAIN LOOP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-    # TESTING/WIP ~~~~~~~~~~~#
-    mov a0, 3
-    mov a1, 1
-    mov a2, tictactoe_turn_o
-    call blit_strl_rom
+    tictactoe_play_main_loop:
 
-    add t0, fp, TTT_PLAY_BOARD_ARR_OFFS
+    # blit current player's string
+    lb t0, fp, TTT_TURN_OFFS # load turn
+    sub t0, 1, t0 # turn = 1 - turn
+    sb fp, TTT_TURN_OFFS, t0 # store turn
+    mov a0, t0
+    call tictactoe_blit_turn_str
+
+    # TESTING/WIP ~~~~~~~~~~~#
+
+    lea t0, fp, TTT_PLAY_BOARD_ARR_OFFS
     sb t0, 2, 1 # board[src1] = X
     sb t0, 4, 2
     sb t0, 8, 1
-    add a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
+    lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
     call ttt_blit_game_state
+
+    mov a0, (60)
+    call util_chrono_sleep_frames
     #~~~~~~~~~~~~~~~~~~~~~~~~#
 
+    # check if someone has won
+
+    jmp tictactoe_play_main_loop
 
     # MAIN LOOP ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 
@@ -358,5 +371,27 @@ blit_ttt_o:
 
     ret
 
+tictactoe_blit_turn_str:
+# a0 = turn
+    push a0
+    push a1
+    push a2
+    mov t0, a0
+
+    mov a0, 3 # line
+    mov a1, 1 # idx
+    eq tictactoe_blit_turn_str_x, t0, TTT_TURN_X # if turn = 0, which is X
+    mov a2, tictactoe_turn_str_o
+    tictactoe_blit_turn_str_do_blit:
+    call blit_strl_rom
+
+    pop a2
+    pop a1
+    pop a0
+    ret
+
+    tictactoe_blit_turn_str_x:
+    mov a2, tictactoe_turn_str_x
+    jmp tictactoe_blit_turn_str_do_blit
 
 

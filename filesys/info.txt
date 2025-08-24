@@ -10,7 +10,7 @@
 }
 - directory {
     file_entry = {
-        {53 byte: char field to hold name (so max 61 char long for null term},
+        {53 byte: char field to hold name (so max 52 char long not counting null term},
         {8 bytes: time field (holds date of last modification)}
         {2 bytes:  little endian ptr storing starting block-id of file},
         {1 byte:  flag (0x1 = file/dir)},
