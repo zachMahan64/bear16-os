@@ -332,6 +332,8 @@ con_echo:
     sub sp, sp, (CON_ECHO_NUM_LOCAL_VARS * 2)
     .const CON_ECHO_PTR_TO_ARGS_OFFS = -2
     sw fp, CON_ECHO_PTR_TO_ARGS_OFFS, rv # save ptr to args @ offset of -2
+    lw t5, rv # check if first char is null (empty args), this prevents a nasty bug
+    eq con_echo_ret, t5, NULL
     # reuse a0
     inc s1
     call check_to_scroll_using_strlen_ram
@@ -348,14 +350,16 @@ con_echo:
     con_echo_null_args:
     dec s1
     call check_to_scroll
+    con_echo_ret:
     ret
+
 con_test:
     call con_success
     ret
 con_cmd_not_found:
 .data
 con_cmd_not_found_str:
-    .string "Error: command not found."
+    .string "[Error] command not found."
 .text
     call check_to_scroll
     inc s1 # increment line

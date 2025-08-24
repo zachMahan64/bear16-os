@@ -19,11 +19,11 @@ tictactoe_title_esc_prompt_str:
 tictactoe_in_game_title_str:
     .string " TIC-TAC-TOE: Ultimate Edition"
 
-tictactoe_turn_1:
-    .string " PLAYER 1's TURN"
+tictactoe_turn_x:
+    .string "X's TURN"
 
-tictactoe_turn_2:
-    .string " PLAYER 2\'S TURN"
+tictactoe_turn_o:
+    .string "O\'S TURN"
 
 
 .text
@@ -100,14 +100,14 @@ tictactoe_play:
 
     # TESTING/WIP ~~~~~~~~~~~#
     mov a0, 3
-    mov a1, 0
-    mov a2, tictactoe_turn_1
+    mov a1, 1
+    mov a2, tictactoe_turn_o
     call blit_strl_rom
 
     add t0, fp, TTT_PLAY_BOARD_ARR_OFFS
-    sb t0, 8, 1 # board[src1] = X
-    sb t0, 5, 2
-    sb t0, 7, 2
+    sb t0, 2, 1 # board[src1] = X
+    sb t0, 4, 2
+    sb t0, 8, 1
     add a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
     call ttt_blit_game_state
     #~~~~~~~~~~~~~~~~~~~~~~~~#

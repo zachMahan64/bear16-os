@@ -1,10 +1,11 @@
 # UTIL/MEMORY.ASM (WIP)
+
+@include "util/constants.asm"
+
 .text
 .const TOP_OF_HEAP_PTR = 6656
 .const STARTING_HEAP_PTR_VALUE = 8192
 .const FREE_LIST_HEAD_LOC = 6558
-
-.const NULL = 0
 
 util_init_free_list:
     lea t0, FREE_LIST_HEAD_LOC

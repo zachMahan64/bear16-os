@@ -1,3 +1,3 @@
-# Bear16
+# Bear16 OS
 
 **(breakdown coming soon)**
