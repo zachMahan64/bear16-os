@@ -102,29 +102,29 @@ tictactoe_play:
 
     tictactoe_play_main_loop:
 
-    # blit current player's string
-    lb t0, fp, TTT_TURN_OFFS # load turn
-    sub t0, 1, t0 # turn = 1 - turn
-    sb fp, TTT_TURN_OFFS, t0 # store turn
-    mov a0, t0
-    call tictactoe_blit_turn_str
+        # blit current player's string
+        lb t0, fp, TTT_TURN_OFFS # load turn
+        sub t0, 1, t0 # turn = 1 - turn
+        sb fp, TTT_TURN_OFFS, t0 # store turn
+        mov a0, t0
+        call tictactoe_blit_turn_str
 
-    # TESTING/WIP ~~~~~~~~~~~#
+        # TESTING/WIP ~~~~~~~~~~~#
 
-    lea t0, fp, TTT_PLAY_BOARD_ARR_OFFS
-    sb t0, 2, 1 # board[src1] = X
-    sb t0, 4, 2
-    sb t0, 8, 1
-    lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
-    call ttt_blit_game_state
+        lea t0, fp, TTT_PLAY_BOARD_ARR_OFFS
+        sb t0, 2, 1 # board[src1] = X
+        sb t0, 4, 2
+        sb t0, 8, 1
+        lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
+        call ttt_blit_game_state
 
-    mov a0, (60)
-    call util_chrono_sleep_frames
-    #~~~~~~~~~~~~~~~~~~~~~~~~#
+        mov a0, (60) # TODO temp
+        call util_chrono_sleep_frames # TODO temp
+        #~~~~~~~~~~~~~~~~~~~~~~~~#
 
-    # check if someone has won
+        # check if someone has won
 
-    jmp tictactoe_play_main_loop
+        jmp tictactoe_play_main_loop
 
     # MAIN LOOP ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 
