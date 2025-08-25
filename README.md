@@ -2,15 +2,15 @@
 ![login screen](screenshots/login_screen.png)
 ## Preface
 - Bear16 is a homebrew 16-bit OS built as a proof of concept for my own instruction set architecture, assembler, and emulator. It is written entirely in assembly and runs in ~20 KB of unified ROM (as of 20250825).
-- This OS is intentionally minimal, with basic kernel functionality exposed through a shell and core system utilities. Binary footprint was a major concern during developemnt (given Bear16's hardware 64 KB ROM limit). Function reuse and modularity are greatly favored over inlining.
-- Everything has been written in raw assembly and every image is a manually constructed bitmap. Thankfully, the assembler supports string literals in .data sections.
-- The font is my own custom character set which I hand-drew with 1s on blank 8x8 bitmaps (see the [source code here](text_processing.asm) if you're curious)
+- This OS is intentionally minimal, with basic kernel functionality exposed through a shell and core system utilities. Binary footprint was a major concern during development (given Bear16's hardware 64 KB ROM limit). Function reuse and modularity are greatly favored over inlining.
+- Everything has been written in raw assembly, and every image is a manually constructed bitmap. Thankfully, the assembler supports string literals in .data sections.
+- The font is my own custom character set that I hand-drew with 1s on blank 8x8 bitmaps (see the [source code here](text_processing.asm) if you're curious)
 - All BLITing, math, clock, disk IO, debugging, error handling, memory managing, string, etc. utilities were handwritten too. I did also write a heap allocator with a linked free list. No glibc access at all (just assembly and a dream).
-- The "features" of the OS are somewhat limited to the incredibly time-consuming nature of manually writing (and debugging!) assembly.
+- The "features" of the OS are somewhat limited by the incredibly time-consuming nature of manually writing (and debugging!) assembly.
 - Early development was quite tricky before the Bear16 assembler and emulator were mature since I would sometimes be forced to debug not only my assembly, but also every stage of development from assembly through the assembler and into the emulator. These issues are now mostly gone as the Bear16 toolchain has been majorly polished.
 - Programming for this OS is incredibly fun, but it is certainly a time sink. Its development is on pause for now, but I will likely revisit it here and there (be it adding new apps or new core utilities).
 ## Build Instructions
-- Visit the [Bear16 tool-chain repo](https://github.com/zachMahan64/bear16) and follow the set up guide there.
+- Visit the [Bear16 tool-chain repo](https://github.com/zachMahan64/bear16) and follow the set-up guide there.
 - Run `b16` in your shell to ensure Bear16 is working on your system (it will automatically configure itself on your system if you haven't launched it before). Then, close it down.
 - Run `b16 --help` if you need a refresher on Bear16 CLI commands
 - Clone the repo:
@@ -35,7 +35,7 @@
 *^ the shell is actually a pretty nice guy*
 ![some_shell_demo.png](screenshots/some_shell_demo.png)
 *^ some more demo*
-- All input is handled through the emulation layer and the OS uses the memory-mapped IO locations to access input keypresses.
+- All inputs are handled through the emulation layer, and the OS uses the memory-mapped IO locations to access input keypresses.
 - You can see the system time, which works through an emulated clock with the correct date and time. It works by being initialized to the host system's clock and then synchronizing 60 times per second to update the memory-mapped clock regions. The OS reads from those regions and can display the time accordingly.
 ### Full list of commands (as of 20250825):
 - "echo" --> echo subsequent text
@@ -48,14 +48,14 @@
 - "hey" --> another greeting
 - "login" --> go back to the Bear16 login screen
 - "kill" --> halt the OS
-- "ferror" --> "force error", designed as a test for critical system error handling
-- "reset" --> resets the console back to initial state
+- "ferror" --> "force error," designed as a test for critical system error handling
+- "reset" --> resets the console back to its initial state
 - "notepad" --> launch notepad
 - "tictactoe" --> launch tictactoe
 - More commands can easily be added as the dispatch table is very modular.
 - Apps can essentially be dropped in either through the "open" command or pseudo-exported to PATH by placing the name of the app in the command dispatch table.
 ![error_screen.png](screenshots/error_screen.png)
-*^ this is what "ferror" does, it's a good demonstration of what a critical system error message looks like.*
+*^ this is what "ferror" does; it's a good demonstration of what a critical system error message looks like.*
 
 ## Bear16 Apps
 ### Notepad
@@ -75,6 +75,6 @@
 ![tictactoe_victory.png](screenshots/tictactoe_victory.png)
 *^ here's what a win looks like. The reason it's just three O's in the image is because there's a fun victory animation that plays where the board goes blank and then each winning tile is replaced in order. It's cool; try playing it yourself. Btw, this was not easy to program.*
 ## The Bear16 Utilities Library
-**The code is decently self-documenting due its comment-full nature and verbose label and constant names**
+**The code is decently self-documenting due to its comment-full nature and verbose label and constant names**
 - Check it out [here](util/)
 - I may add a more rigorous breakdown in this section in the future since this was actually the most technically involved and challenging aspect of developing the OS.
