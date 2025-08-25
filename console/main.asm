@@ -425,7 +425,7 @@ con_hey_str:
 con_help:
 .data
 con_help_str:
-    .string "See the bear16_os repo on Github for help!"
+    .string "See the bear16-os repo on Github for help!"
 .text
     mov a0, con_help_str
     call con_scroll_purely_visual_using_strlen_rom
