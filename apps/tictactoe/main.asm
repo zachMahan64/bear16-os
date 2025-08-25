@@ -115,17 +115,18 @@ tictactoe_play:
         mov a0, t0
         call tictactoe_blit_turn_str
 
-        # TESTING/WIP ~~~~~~~~~~~#
+        # GET INPUT
+        lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS
+        lb a1, fp, TTT_TURN_OFFS # load turn
+        call tictactoe_get_input
 
-        lea t0, fp, TTT_PLAY_BOARD_ARR_OFFS
-        sb t0, 2, 1 # board[src1] = X
-        sb t0, 4, 2
-        sb t0, 8, 1
         lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- &board
         call ttt_blit_game_state
 
-        mov a0, (60) # TODO temp
-        call util_chrono_sleep_frames # TODO temp
+        # TESTING/WIP ~~~~~~~~~~~#
+
+        #mov a0, (60) # TODO temp
+        #call util_chrono_sleep_frames # TODO temp
         #~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # check if someone has won
@@ -135,7 +136,7 @@ tictactoe_play:
     # MAIN LOOP ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 
 
-
+    tictactoe_play_exit:
     call util_stall_esc # temporary
     call util_clr_fb # clear screen for clean returning to title screen
     # loop this w/ an escape at some point
@@ -403,4 +404,42 @@ tictactoe_blit_turn_str:
 tictactoe_get_input:
 # a0 = board*
 # a1 = turn
-    ret
+
+    tictactoe_get_input_loop:
+        lb t1, IO_LOC
+
+        lt tictactoe_get_input_loop, t1, 49 # guard 49 = '1' in ASCII
+        gt tictactoe_get_input_loop, t1, 57 # guard 57 = '9' in ASCII
+
+        sub t1, t1, (48 + 1) # turn char num into integer - 1 for proper 0-start addressing
+        lb t2, a0, t1 # t2 <- [board* + input #]
+        eq tictactoe_get_input_loop_hit_empty t2, 0 # 0 means empty
+
+        jmp tictactoe_get_input_loop
+
+        tictactoe_get_input_loop_hit_empty:
+            lea t0, IO_LOC
+            sb t0, 0 # clr IO mem location
+            add t3, a1, 1 # t3 = turn value as X vs O for board struct
+            sb a0, t1, t3
+            ret
+
+tictactoe_check_if_someone_won:
+# a0 = board*
+# rv <- someone won.
+
+# DESIGN ---->
+#
+# valid patterns:
+# 012   ***   ***   0**   **2   0**   *1*   **2
+# ***   345   ***   *4*   *4*   3**   *4*   **5
+# ***   ***   678   **8   6**   6**   *7*   **8
+#
+#  0     1     2     3     4     5     6     7
+#
+# ^^ names ^^
+
+# we can just bitwise AND the desired tiles for each pattern and check if theres a result > 0 since X is 0x1 and O is 0x2, which are bitmasks
+
+
+
