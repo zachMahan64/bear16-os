@@ -114,5 +114,5 @@ ttt_tips_str_0:
 ttt_tips_str_1:
     .string "------"
 ttt_tips_str_2:
-    .string "* Play with a friend!\n\n* I might add in a bot later...\n\n* Use the numbers in the bottom\n  left as a guide."
+    .string " * Play with a friend!\n\n * I might add in a bot later...\n * Use the numbers in the bottom left as a guide."
 

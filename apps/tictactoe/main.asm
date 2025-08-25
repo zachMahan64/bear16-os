@@ -484,7 +484,6 @@ tictactoe_check_if_someone_won:
 
     sub sp, sp, TTT_PLAY_BOARD_ARR_SIZE # temp board for an animation
     .const TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS = -9
-    sub sp, sp, 1
 
     push s2 # preserve
     push s3 # ^
