@@ -1,9 +1,10 @@
 # Bear16 OS
 ![login screen](screenshots/login_screen.png)
 ## Preface
-- This operating system is small. It has basic kernel functionality exposed through a shell and core system utility functions. It runs in one unified ROM (as of 20250825 it all fits on about ~20 KB of ROM).
+- Bear16 is a homebrew 16-bit OS built as a proof of concept for my own instruction set architecture, assembler, and emulator. It is written entirely in assembly and runs in ~20 KB of unified ROM (as of 20250825).
+- This OS is intentionally minimal, with basic kernel functionality exposed through a shell and core system utilities. Binary footprint was a major concern during developemnt (given Bear16's hardware 64 KB ROM limit). Function reuse and modularity are greatly favored over inlining.
 - Everything has been written in raw assembly and every image is a manually constructed bitmap. Thankfully, the assembler supports string literals in .data sections.
-- The font is my own custom character set which I hand-drew with 1s on blank 8x8 bitmaps (see the [source code here](text_processing.asm) if your curious)
+- The font is my own custom character set which I hand-drew with 1s on blank 8x8 bitmaps (see the [source code here](text_processing.asm) if you're curious)
 - All BLITing, math, clock, disk IO, debugging, error handling, memory managing, string, etc. utilities were handwritten too. I did also write a heap allocator with a linked free list. No glibc access at all (just assembly and a dream).
 - The "features" of the OS are somewhat limited to the incredibly time-consuming nature of manually writing (and debugging!) assembly.
 - Early development was quite tricky before the Bear16 assembler and emulator were mature since I would sometimes be forced to debug not only my assembly, but also every stage of development from assembly through the assembler and into the emulator. These issues are now mostly gone as the Bear16 toolchain has been majorly polished.
@@ -31,9 +32,9 @@
 
 ## The Bear16 Shell
 ![friendly_console.png](screenshots/friendly_console.png)
-^ the shell is actually a pretty nice guy
+*^ the shell is actually a pretty nice guy*
 ![some_shell_demo.png](screenshots/some_shell_demo.png)
-^ some more demo
+*^ some more demo*
 - All input is handled through the emulation layer and the OS uses the memory-mapped IO locations to access input keypresses.
 - You can see the system time, which works through an emulated clock with the correct date and time. It works by being initialized to the host system's clock and then synchronizing 60 times per second to update the memory-mapped clock regions. The OS reads from those regions and can display the time accordingly.
 ### Full list of commands (as of 20250825):
@@ -54,7 +55,7 @@
 - More commands can easily be added as the dispatch table is very modular.
 - Apps can essentially be dropped in either through the "open" command or pseudo-exported to PATH by placing the name of the app in the command dispatch table.
 ![error_screen.png](screenshots/error_screen.png)
-  *^ this what "ferror" does, it's a good demonstration of what a critical system error message looks like.*
+*^ this is what "ferror" does, it's a good demonstration of what a critical system error message looks like.*
 
 ## Bear16 Apps
 ### Notepad
@@ -64,15 +65,15 @@
 ### Tic-Tac-Toe
 - A two-player game with automatic draw and win detection. The code for this is super clean, [feel free to check it out](apps/tictactoe/main.asm).
 ![tictactoe_title_screen.png](screenshots/tictactoe_title_screen.png)
-^ main menu
+*^ main menu*
 ![tictactoe_tips.png](screenshots/tictactoe_tips.png)
-^ the tips page
+*^ the tips page*
 ![tictactoe_midgame.png](screenshots/tictactoe_midgame.png)
-^ here's what it looks like as we play
+*^ here's what it looks like as we play*
 ![tictactoe_draw.png](screenshots/tictactoe_draw.png)
-^ here's what a draw looks like
+*^ here's what a draw looks like*
 ![tictactoe_victory.png](screenshots/tictactoe_victory.png)
-^ here's what a win looks like. The reason it's just three O's the image is because there's a fun victory animation that plays where the board goes blank and then each winning tile is replaced in order. It's cool, play for yourself to this. Btw, this is not easy to program. 
+*^ here's what a win looks like. The reason it's just three O's in the image is because there's a fun victory animation that plays where the board goes blank and then each winning tile is replaced in order. It's cool; try playing it yourself. Btw, this was not easy to program.*
 ## The Bear16 Utilities Library
 **The code is decently self-documenting due its comment-full nature and verbose label and constant names**
 - Check it out [here](util/)
