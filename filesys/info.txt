@@ -1,19 +1,22 @@
 - blocks:
     - 16 MB total disk space - > 4096 x 4 KB (4096 byte) blocks -> each block id is 12 bits (so << 12 to address them)
-    - first 3 block holds metadata
-    - first block = array of 4096 bytes correspond to each block (0 = free, non-zero = used)
-    - 2nd and 3rd block hold FAT
-- FAT structure = array of 4096 uint16 where each entry is mapped to a block (when FAT[idx] is non-zero = ptr to next block in file chain, FAT[idx] = 0 is terminator/EOF)
-    - address 0, 1, & 2 are inherently reserved
+    - first 2 block holds metadata (FAT)
+    - FAT structure = array of 4096 uint16 where each entry is mapped to a block
+    - when FAT[idx] is non-zero = ptr to next block in file chain
+    - when FAT[idx] = 0, that block is free
+    - when FAT[idx] = 0xFFFF, that indicates EOF
+    - address 0, 1, & 0xFFFF are inherently reserved
 - file structure {
     {... file contents}
 }
 - directory {
     file_entry = {
-        {53 byte: char field to hold name (so max 52 char long not counting null term},
-        {8 bytes: time field (holds date of last modification)}
-        {2 bytes:  little endian ptr storing starting block-id of file},
+        {51 byte: char field to hold name (so max 50 char long not counting null term},
+        {8 bytes: *time field (holds date of last modification)},
+        {2 bytes: *uint16 holding FILE size},
+        {2 bytes: little endian ptr storing starting block-id of file},
         {1 byte:  flag (0x1 = file/dir)},
-    }
+    } -> * indicates must be updated w/ each write
     ... files can appened by searching file entries by reading each 64 byte interval and checking if the first byte is null -> since filename can't be empty, a null at file_entry[0] = 0 means this file_entry region is unoccupied
+    ... directories can be stored recursively
 }
