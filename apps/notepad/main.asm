@@ -94,6 +94,10 @@ notepad_main:
                 notepad_snotepad_subr_backline:
                     dec s1               # go back a line
                     mov s0, 31 # set index ptr to end of last line
+                    mov a0, s1
+                    mov a1, s0
+                    mov a2, ' '
+                    call blit_cl # clear char back a line
                     jmp notepad_snotepad_subr_backline_exit
         notepad_subr_newline:
             mov a0, s1  # line ptr

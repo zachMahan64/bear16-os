@@ -151,6 +151,10 @@ con_get_line:
                 ssubr_con_backline:
                     dec s1               # go back a line
                     mov s0, 31 # set index ptr to end of last line
+                    mov a0, s1
+                    mov a1, s0
+                    mov a2, ' '
+                    call blit_cl # clear char back a line
                     jmp ssubr_con_backline_exit
         subr_con_newline:
         #BUFFER WRITE----------------#
