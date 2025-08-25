@@ -7,7 +7,7 @@
 - All BLITing, math, clock, disk IO, debugging, error handling, memory managing, string, etc. utilities were handwritten too. I did also write a heap allocator with a linked free list. No glibc access at all (just assembly and a dream).
 - The "features" of the OS are somewhat limited to the incredibly time-consuming nature of manually writing (and debugging!) assembly.
 - Early development was quite tricky before the Bear16 assembler and emulator were mature since I would sometimes be forced to debug not only my assembly, but also every stage of development from assembly through the assembler and into the emulator. These issues are now mostly gone as the Bear16 toolchain has been majorly polished.
-- Programming for this OS is incredibly fun, but super timing consuming. Its development is on pause for now, but I will likely revisit it here and there (be it adding new apps or new core utilities).
+- Programming for this OS is incredibly fun, but it is certainly a time sink. Its development is on pause for now, but I will likely revisit it here and there (be it adding new apps or new core utilities).
 ## Build Instructions
 - Visit the [Bear16 tool-chain repo](https://github.com/zachMahan64/bear16) and follow the set up guide there.
 - Run `b16` in your shell to ensure Bear16 is working on your system (it will automatically configure itself on your system if you haven't launched it before). Then, close it down.
