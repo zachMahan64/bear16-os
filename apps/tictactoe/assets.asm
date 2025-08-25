@@ -105,3 +105,14 @@ ttt_victory_str:
 
 ttt_esc_to_return_to_menu_str:
     .string "[ESC] to return to menu"
+
+ttt_draw_str:
+    .string "DRAW!"
+
+ttt_tips_str_0:
+    .string "TIPS"
+ttt_tips_str_1:
+    .string "------"
+ttt_tips_str_2:
+    .string "* Play with a friend!\n\n* I might add in a bot later...\n\n* Use the numbers in the bottom\n  left as a guide."
+

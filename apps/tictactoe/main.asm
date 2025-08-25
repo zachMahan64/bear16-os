@@ -14,9 +14,11 @@ tictactoe_title_name_str:
 tictactoe_title_edition_str:
     .string "Ultimate Edition"
 tictactoe_title_play_prompt_str:
-    .string " ENTER to play"
+    .string "[ENTER] to play"
+tictactoe_title_tips_str:
+    .string "[T] to view tips"
 tictactoe_title_esc_prompt_str:
-    .string "  ESC to exit"
+    .string " [ESC] to exit"
 
 tictactoe_in_game_title_str:
     .string " TIC-TAC-TOE: Ultimate Edition"
@@ -52,7 +54,11 @@ tictactoe_enter_title_page:
     mov a1, 8
     mov a2, tictactoe_title_play_prompt_str
     call blit_strl_rom
-    mov a0, 8
+    mov a0, 9
+    mov a1, 8
+    mov a2, tictactoe_title_tips_str
+    call blit_strl_rom
+    mov a0, 11
     mov a1, 8
     mov a2, tictactoe_title_esc_prompt_str
     call blit_strl_rom
@@ -60,12 +66,37 @@ tictactoe_enter_title_page:
         lb t0, IO_LOC
         eq tictactoe_goto_ret, t0, K_ESC
         eq tictactoe_goto_play, t0, K_ENTER
+        eq tictactoe_view_tips, t0, 't'
         jmp tictactoe_enter_title_page_loop
     tictactoe_goto_play:
         lea t1, IO_LOC
         sb t1, 0 # clear
         call tictactoe_play
         jmp tictactoe_enter_title_page # re-enter title page w/o call routine (non-recursive)
+    tictactoe_view_tips:
+        call util_clr_fb
+        mov a0, 1
+        mov a1, 14
+        mov a2, ttt_tips_str_0
+        call blit_strl_rom
+
+        mov a0, 2
+        mov a1, 13
+        mov a2, ttt_tips_str_1
+        call blit_strl_rom
+
+        mov a0, 3
+        mov a1, 0
+        mov a2, ttt_tips_str_2
+        call blit_strl_rom
+
+        mov a0, 22
+        mov a1, 4
+        mov a2, ttt_esc_to_return_to_menu_str
+        call blit_strl_rom
+        call util_stall_esc
+        call util_clr_fb
+        jmp tictactoe_enter_title_page # ^
     tictactoe_goto_ret:
         lea t1, IO_LOC
         sb t1, 0 # clear
@@ -134,6 +165,10 @@ tictactoe_play:
         lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- board*
         lb a1, fp, TTT_TURN_OFFS # a1 = turn
         call tictactoe_check_if_someone_won
+        eq tictactoe_play_exit, rv, TRUE
+
+        lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- board*
+        call tictactoe_check_if_draw
         eq tictactoe_play_exit, rv, TRUE
 
         jmp tictactoe_play_main_loop
@@ -451,7 +486,6 @@ tictactoe_check_if_someone_won:
     .const TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS = -9
     sub sp, sp, 1
 
-
     push s2 # preserve
     push s3 # ^
     push s4 # ^
@@ -566,14 +600,15 @@ tictactoe_check_if_someone_won:
         call tictactoe_blit_board # empty board
 
         # blit X or O animation
-        mov a0, (60)
+        .const TTT_CHECK_IF_SOMEONE_WON_ANIM_SPEED = 30 # in frames
+        mov a0, TTT_CHECK_IF_SOMEONE_WON_ANIM_SPEED
         call util_chrono_sleep_frames
         lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
         sb t0, s2, s4
         lea a0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
         call ttt_blit_game_state
 
-        mov a0, (60)
+        mov a0, TTT_CHECK_IF_SOMEONE_WON_ANIM_SPEED
         call util_chrono_sleep_frames
         lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
         add s2, s2, s3
@@ -581,7 +616,7 @@ tictactoe_check_if_someone_won:
         lea a0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
         call ttt_blit_game_state
 
-        mov a0, (60)
+        mov a0, TTT_CHECK_IF_SOMEONE_WON_ANIM_SPEED
         call util_chrono_sleep_frames
         lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
         add s2, s2, s3
@@ -607,4 +642,37 @@ tictactoe_check_if_someone_won:
     pop s2 # restore ^
     ret
 
+tictactoe_check_if_draw:
+# a0 = board*
+# rv <- TRUE/FALSE whether it's a draw
+    push a0
+    push a0
+    clr t0 # cnt
+    tictactoe_check_if_draw_loop:
+        lb t1, a0, t0
+        eq tictactoe_check_if_draw_exit_false, t1, 0 # exit if there's an empty tile
+        inc t0
+        ult tictactoe_check_if_draw_loop, t0, TTT_PLAY_BOARD_ARR_SIZE # = 9
 
+    call util_clr_fb
+    call tictactoe_blit_board
+    pop a0
+    call ttt_blit_game_state
+    mov a0, 3
+    mov a1, 13
+    mov a2, ttt_draw_str
+    call blit_strl_rom
+
+    # let 'em exit
+    mov a0, 22
+    mov a1, 4
+    mov a2, ttt_esc_to_return_to_menu_str
+    call blit_strl_rom
+    call util_stall_esc
+    mov rv, TRUE
+    pop a0
+    ret
+    tictactoe_check_if_draw_exit_false:
+    mov rv, FALSE
+    pop a0
+    ret
