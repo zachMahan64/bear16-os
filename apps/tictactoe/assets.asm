@@ -32,51 +32,6 @@ ttt_tset_map_2:
 .byte 0b00011000
 .byte 0b00011000
 .byte 0b00011000
-ttt_tset_map_3:
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-ttt_tset_map_4:
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-ttt_tset_map_5:
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-ttt_tset_map_6:
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-ttt_tset_map_7:
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
-.byte 0b00000000
 ttt_tset_map_end:
 
 ttt_x_map_tleft:
@@ -144,3 +99,9 @@ ttt_o_map_end:
 
 ttt_tile_nums_str:
     .string "1|2|3\n -+-+-\n 4|5|6\n -+-+-\n 7|8|9"
+
+ttt_victory_str:
+    .string "VICTORY!"
+
+ttt_esc_to_return_to_menu_str:
+    .string "[ESC] to return to menu"

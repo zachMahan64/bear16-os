@@ -4,6 +4,7 @@
 @include "os_core.asm"
 @include "util/blit.asm"
 @include "console/main.asm" # for proper console integration
+@include "util/random.asm"
 
 @include "apps/tictactoe/assets.asm"
 
@@ -101,7 +102,9 @@ tictactoe_play:
     .const TTT_TURN_O = 1
     .const TTT_TURN_OFFS = -10
     sub sp, sp, 1
-    sb fp, TTT_TURN_OFFS, TTT_TURN_X # initialize to player x's turn, which is an alias for 0
+    call util_random_uint16
+    mod t0, rv, 2 # random either 0 or 1 (indicated turn)
+    sb fp, TTT_TURN_OFFS, t0 # initialize to a random player
     # LOCALS  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 
     # MAIN LOOP ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -125,11 +128,13 @@ tictactoe_play:
 
         # TESTING/WIP ~~~~~~~~~~~#
 
-        #mov a0, (60) # TODO temp
-        #call util_chrono_sleep_frames # TODO temp
         #~~~~~~~~~~~~~~~~~~~~~~~~#
 
         # check if someone has won
+        lea a0, fp, TTT_PLAY_BOARD_ARR_OFFS # a0 <- board*
+        lb a1, fp, TTT_TURN_OFFS # a1 = turn
+        call tictactoe_check_if_someone_won
+        eq tictactoe_play_exit, rv, TRUE
 
         jmp tictactoe_play_main_loop
 
@@ -137,7 +142,6 @@ tictactoe_play:
 
 
     tictactoe_play_exit:
-    call util_stall_esc # temporary
     call util_clr_fb # clear screen for clean returning to title screen
     # loop this w/ an escape at some point
     ret
@@ -426,7 +430,8 @@ tictactoe_get_input:
 
 tictactoe_check_if_someone_won:
 # a0 = board*
-# rv <- someone won.
+# a1 = turn
+# rv <- someone won. (TRUE/FALSE as 1/0)
 
 # DESIGN ---->
 #
@@ -437,9 +442,169 @@ tictactoe_check_if_someone_won:
 #
 #  0     1     2     3     4     5     6     7
 #
-# ^^ names ^^
+# ^^ state names ^^
 
 # we can just bitwise AND the desired tiles for each pattern and check if theres a result > 0 since X is 0x1 and O is 0x2, which are bitmasks
+# and 0 indicates empty so a > 0 check will work nicely
 
+    sub sp, sp, TTT_PLAY_BOARD_ARR_SIZE # temp board for an animation
+    .const TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS = -9
+    sub sp, sp, 1
+
+
+    push s2 # preserve
+    push s3 # ^
+    push s4 # ^
+    push a0 # ^
+    push a1 # ^
+    push a2 # ^
+
+    add s4, a1, 1 # save our turn for later and 1 to convert to board tile value TODO
+
+    # s2 = starting tile
+    # s3 = stride
+    # we'll use this for the victory animation
+
+    # state 0
+    lb t0, a0, 0
+    lb t1, a0, 1
+    lb t2, a0, 2
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 0
+    mov s3, 1
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 1
+    lb t0, a0, 3
+    lb t1, a0, 4
+    lb t2, a0, 5
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 3
+    mov s3, 1
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 2
+    lb t0, a0, 6
+    lb t1, a0, 7
+    lb t2, a0, 8
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 6
+    mov s3, 1
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 3
+    lb t0, a0, 0
+    lb t1, a0, 4
+    lb t2, a0, 8
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 0
+    mov s3, 4
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 4
+    lb t0, a0, 2
+    lb t1, a0, 4
+    lb t2, a0, 6
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 2
+    mov s3, 2
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 5
+    lb t0, a0, 0
+    lb t1, a0, 3
+    lb t2, a0, 6
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 0
+    mov s3, 3
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 6
+    lb t0, a0, 1
+    lb t1, a0, 4
+    lb t2, a0, 7
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 1
+    mov s3, 3
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # state 7
+    lb t0, a0, 2
+    lb t1, a0, 5
+    lb t2, a0, 8
+    and t1, t0, t1
+    and t2, t1, t2
+
+    mov s2, 2
+    mov s3, 3
+    ugt tictactoe_check_if_someone_won_true, t2, 0
+
+    # no one won ->
+    mov rv, FALSE
+    jmp tictactoe_check_if_someone_won_ret
+    tictactoe_check_if_someone_won_true:
+        # fun animation
+        call util_clr_fb
+        mov a0, 3
+        mov a1, 12
+        mov a2, ttt_victory_str
+        call blit_strl_rom
+        call tictactoe_blit_board # empty board
+
+        # blit X or O animation
+        mov a0, (60)
+        call util_chrono_sleep_frames
+        lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        sb t0, s2, s4
+        lea a0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        call ttt_blit_game_state
+
+        mov a0, (60)
+        call util_chrono_sleep_frames
+        lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        add s2, s2, s3
+        sb t0, s2, s4
+        lea a0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        call ttt_blit_game_state
+
+        mov a0, (60)
+        call util_chrono_sleep_frames
+        lea t0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        add s2, s2, s3
+        sb t0, s2, s4
+        lea a0, fp, TTT_CHECK_IF_SOMEONE_WON_BOARD_OFFS
+        call ttt_blit_game_state
+
+
+        # let 'em exit
+        mov a0, 22
+        mov a1, 4
+        mov a2, ttt_esc_to_return_to_menu_str
+        call blit_strl_rom
+        call util_stall_esc
+        mov rv, TRUE # 1
+        # fall through to return
+    tictactoe_check_if_someone_won_ret:
+    pop a2
+    pop a1
+    pop a0
+    pop s4
+    pop s3
+    pop s2 # restore ^
+    ret
 
 
