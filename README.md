@@ -14,13 +14,13 @@
 - Run `b16` in your shell to ensure Bear16 is working on your system (it will automatically configure itself on your system if you haven't launched it before). Then, close it down.
 - Run `b16 --help` if you need a refresher on Bear16 CLI commands
 - Clone the repo:
-  - `cd ~/bear16_projects` (this is the default path where bear16 looks for projects) 
+  - `cd ~/bear16_projects` (this is the default path where bear16 looks for projects)
     - On Windows, it's `cd %USERPROFILE%\bear16_projects`
     - You can clone the repo anywhere on your system, just make sure to replace all references to the path with the one you used for the rest of this guide.
   - `git clone https://github.com/zachMahan64/bear16-os`
 - Build and run the OS using the Bear16 Assembler:
   - Using the project-based TUI:
-    - Run `b16` 
+    - Run `b16`
     - Make sure the entry file is `main.asm` and the project name is `bear16` (these should be the default settings, but you can change the config of course).
     - Select one of the "Assemble" options.
     - It should say if your binary was successfully built.
@@ -29,6 +29,8 @@
     - `cd ~/bear16_projects` (`cd %USERPROFILE%\bear16_projects` on Windows)
     - `b16 -a main.asm build/os.bin`
       - or assemble and run all in one go `b16 -ar main.asm build/os.bin`
+- You can also directly run a release binary. Just downlaod it and run (after setting up b16):
+  - `b16 -r your/download/path/bear16-os.bin`
 
 ## The Bear16 Shell
 ![friendly_console.png](screenshots/friendly_console.png)
@@ -40,7 +42,7 @@
 ### Full list of commands (as of 20250825):
 - "echo" --> echo subsequent text
 - "test" --> test if the console is reachable
-- "help" --> get a help msg (just tells you to read the repo) 
+- "help" --> get a help msg (just tells you to read the repo)
 - "clear" --> clear the console's screen
 - "open" --> open an app (name given as an argument)
 - "hello" --> greet the world
