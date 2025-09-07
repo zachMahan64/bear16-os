@@ -115,10 +115,16 @@ notepad_main:
             mov a1, s0  # index ptr
             mov a2, ' ' # space for blank
             call blit_cl
-            add s0, s0, 3 # move forward 2 indices for tab + 1 for going to next char
+            add s0, s0, 2 # move forward 2 indices for tab
+            ugt notepad_subr_tab_overshoot, s0, (LINE_WIDTH_B - 1) # 31
+            notepad_subr_tab_overshoot_exit:
             lea t0, IO_LOC # ->
             sb t0, 0       # clear IO memory location
             jmp notepad_loop
+            notepad_subr_tab_overshoot:
+                mov s0, 0
+                add s1, s1, 1
+                jmp notepad_subr_tab_overshoot_exit
         notepad_subr_esc:
             lea t0, IO_LOC # ->
             sb t0, 0       # clear IO memory location
