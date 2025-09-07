@@ -92,9 +92,6 @@ nonalpha_shift_map: # we use this for linear look ups
 .const NONALPHA_SHIFT_MAP_ENTRY_SIZE = 2
 .const NONALPHA_SHIFT_MAP_ENTRY_COUNT = 22
 .const NONALPHA_SHIFT_MAP_SIZE = 44
-# month str array
-.const MONTH_STR_ARRAY_ENTRY_SIZE = 4
-.const MONTH_STR_ARRAY_SIZE = 48
 
 # FRAMEBUFFER CONSTANTS
 .const FB_LOC = 0

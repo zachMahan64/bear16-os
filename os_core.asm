@@ -14,19 +14,6 @@
 
 .data
 
-month_str_array:
-    .string "JAN"
-    .string "FEB"
-    .string "MAR"
-    .string "APR"
-    .string "MAY"
-    .string "JUN"
-    .string "JUL"
-    .string "AUG"
-    .string "SEP"
-    .string "OCT"
-    .string "NOV"
-    .string "DEC"
 welcome_msg:
     .string "   Welcome to the Bear16 OS!\n    VERSION 1.0.1, 20250907"
 

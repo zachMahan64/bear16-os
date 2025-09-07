@@ -104,6 +104,25 @@ util_chrono_sleep_frames:
 
 
 # BLIT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+.data
+month_str_array:
+    .string "JAN"
+    .string "FEB"
+    .string "MAR"
+    .string "APR"
+    .string "MAY"
+    .string "JUN"
+    .string "JUL"
+    .string "AUG"
+    .string "SEP"
+    .string "OCT"
+    .string "NOV"
+    .string "DEC"
+# month str array consts
+.const MONTH_STR_ARRAY_ENTRY_SIZE = 4
+.const MONTH_STR_ARRAY_SIZE = 48
+.text
+
 util_chrono_blit_date: # alias
 util_chrono_blit_long_format_date_line_idx:
 # a0 = starting line
