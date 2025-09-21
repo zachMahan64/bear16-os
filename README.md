@@ -54,6 +54,7 @@
 - "reset" --> resets the console back to its initial state
 - "notepad" --> launch notepad
 - "tictactoe" --> launch tictactoe
+- "gravity" --> launch gravity simulator
 - More commands can easily be added as the dispatch table is very modular.
 - Apps can essentially be dropped in either through the "open" command or pseudo-exported to PATH by placing the name of the app in the command dispatch table.
 ![error_screen.png](screenshots/error_screen.png)
@@ -76,6 +77,8 @@
 *^ here's what a draw looks like*
 ![tictactoe_victory.png](screenshots/tictactoe_victory.png)
 *^ here's what a win looks like. The reason it's just three O's in the image is because there's a fun victory animation that plays where the board goes blank and then each winning tile is replaced in order. It's cool; try playing it yourself. Btw, this was not easy to program.*
+### Gravity Simulator
+- Interactively simulates gravity on a 2d plane with a bouncing elastic ball. Uses the hardware fixed point instructions for calculations. Basis for future games that might need a gravity-based physics core.
 ## The Bear16 Utilities Library
 **The code is decently self-documenting due to its comment-full nature and verbose label and constant names**
 - Check it out [here](util/)
