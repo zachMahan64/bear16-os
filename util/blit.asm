@@ -6,6 +6,7 @@
 blit_byte_tile:
     #a0 = line, a1 = index, a2 = desired tile (works for any flat-data tile), s10 = clobber (TRUE/FALSE)
     mult t0, a0, LINE_SIZE # set line
+    blit_byte_row_entrance:
     add t0, t0, a1 # set index
     add t0, t0, FB_LOC #adjust for FB location start in SRAM
 
@@ -27,6 +28,10 @@ blit_byte_tile:
         or t3, t3, t4 # bitwise or rom and ram byte
         jmp blit_byte_tile_clobber_false_exit
 
+blit_byte_row:
+    #a0 = row (0 - 191), a1 = index, a2 = desired tile (works for any flat-data tile), s10 = clobber (TRUE/FALSE)
+    mult t0, a0, LINE_WIDTH_B # set line
+    jmp blit_byte_row_entrance # reuse logic (it's the same for the rest of the function)
 
 blit_cursor_line_idx:
 # a0 = line

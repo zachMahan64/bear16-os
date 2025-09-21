@@ -29,6 +29,7 @@ cmd_table:
 # this aliases the names of apps as commands!
     .word app_dis_notepad, notepad_main
     .word app_dis_tic_tac_toe, tictactoe_start
+    .word app_dis_gravity, gravity_main
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     .word NULL, con_cmd_not_found # throw an error if we read the table terminator

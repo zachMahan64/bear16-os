@@ -5,4 +5,6 @@ app_name_table:
         .string "notepad"
     app_dis_tic_tac_toe:
         .string "tictactoe"
+    app_dis_gravity:
+        .string "gravity"
     # add more here!

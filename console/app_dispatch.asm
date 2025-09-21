@@ -3,6 +3,7 @@
 # put apps here!
 @include "apps/notepad/main.asm"
 @include "apps/tictactoe/main.asm"
+@include "apps/gravity/main.asm"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 .data
 app_dis_start:
