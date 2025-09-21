@@ -158,15 +158,13 @@ gravity_update_ball_y_pos:
     ugt gravity_update_ball_y_pos_bounce, s6, (191- 8) # height when ball is at bottom of FB
     gravity_update_ball_y_pos_bounce_exit:
 
-    mult_fpt t0, a1, 1.0 # flip sign?
-    mult_fpt t1, a2, 1.0 # ^
+    mult_fpt t0, a1, 1.0
+    mult_fpt t1, a2, 1.0
 
-    # .5 (last velo + curr velo) = average velo over last frame
+    # fixed point hack to get rounding correct for position tracking update
     mult_fpt t0, .5, t0
     mult_fpt t1, .5, t0
     add t2, t0, t1
-
-    div_fpt t2, t2, 1.0 # divide by 60 cuz 60 frames per second
 
     mov t0, t2
     and t1, t0, 0x8000 # get high bit
