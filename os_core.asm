@@ -15,7 +15,7 @@
 .data
 
 welcome_msg:
-    .string "   Welcome to the Bear16 OS!\n    VERSION 1.0.1, 20250907"
+    .string "   Welcome to the Bear16 OS!\n    VERSION 1.1.0, 20250921"
 
 .text
 #WELCOME
