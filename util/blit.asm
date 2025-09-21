@@ -2,6 +2,19 @@
 # Note: text-related blitting (strings & chars) are availible in "text_processing.asm"
 @include "util/chrono.asm"
 @include "text_processing.asm"
+
+.data
+blit_empty_tile:
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+.byte 0b00000000
+
+
 .text
 blit_byte_tile:
     #a0 = line, a1 = index, a2 = desired tile (works for any flat-data tile), s10 = clobber (TRUE/FALSE)

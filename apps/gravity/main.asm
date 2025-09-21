@@ -33,11 +33,38 @@ gravity_main:
     push s5
     push s6
 
-    # s3 = last frametime, s4 = this frametime, s5 = curr velocity, s6 = ball y-pos
-    .const GRAVITY_BALL_STARTING_X_IDX = 16
+    call util_clr_fb # clear screen
+
+    # s3 = last frametime, s4 = this frametime, s5 = curr velocity, s6 = ball y-pos -> turn this into a data struct for modularity
+    .const GRAVITY_BALL_STARTING_X_IDX = 16 # perhaps make non-constant to allow ball to be dropped anywhere
     mov s5, 0.0
     mov s6, 16 # set starting y-pos, LOWER VALUE MEANS HIGHER UP IN THE FRAMEBUFFER
 
+    mov a0, 1
+    mov a1, 10
+    mov a2, gravity_title_str
+    call blit_strl_rom
+
+    mov a0, 2
+    mov a1, 0
+    mov a2, gravity_line_str
+    call blit_strl_rom
+
+
+    mov a0, 3
+    mov a1, 0
+    mov a2, gravity_exit_str
+    call blit_strl_rom
+
+    mov a0, 4
+    mov a1, 0
+    mov a2, gravity_drop_str
+    call blit_strl_rom
+
+    mov a0, 5
+    mov a1, 0
+    mov a2, gravity_line_str
+    call blit_strl_rom
 
     gravity_main_loop:
         call util_chrono_frametime_capture
@@ -55,6 +82,13 @@ gravity_main:
             call util_chrono_frametime_check_elapsed
             ne gravity_main_loop_wait_loop, rv, TRUE
 
+        # clear last ball loc
+        mov a0, s6
+        mov a1, GRAVITY_BALL_STARTING_X_IDX
+        mov a2, blit_empty_tile
+        mov s10, TRUE
+        call blit_byte_row
+
         # position
         mov a0, s6
         mov a1, s5
@@ -68,35 +102,6 @@ gravity_main:
         mov s5, rv
 
         # draw logic
-        call util_clr_fb
-
-        mov a0, 1
-        mov a1, 10
-        mov a2, gravity_title_str
-        call blit_strl_rom
-
-        mov a0, 2
-        mov a1, 0
-        mov a2, gravity_line_str
-        call blit_strl_rom
-
-
-        mov a0, 3
-        mov a1, 0
-        mov a2, gravity_exit_str
-        call blit_strl_rom
-
-        mov a0, 4
-        mov a1, 0
-        mov a2, gravity_drop_str
-        call blit_strl_rom
-
-        mov a0, 5
-        mov a1, 0
-        mov a2, gravity_line_str
-        call blit_strl_rom
-
-
         mov a0, s6
         mov a1, GRAVITY_BALL_STARTING_X_IDX
         call gravity_draw_ball
